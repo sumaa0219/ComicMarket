@@ -24,6 +24,7 @@ export default function ItemList() {
   const { data: session } = useSession();
   const [productList, setProductList] = useState([]);
   const [productName, setProductName] = useState();
+  const [productPrice, setProductPrice] = useState();
   const [optionListNum, setOptionListNum] = useState([]);
   const [optionList, setOptionList] = useState([]);
 
@@ -60,6 +61,7 @@ export default function ItemList() {
         return {
           value: productName,
           label: productName,
+          price: jsonData[No][v]["price"]
         };
       });
       setOptionList(newOptionList);
@@ -90,6 +92,7 @@ export default function ItemList() {
 
   const handleSelectChange = (selectedOption) => {
     setProductName(selectedOption?.value);
+    setProductPrice(selectedOption?.price)
   };
 
   const handleInputChange = (event) => {
@@ -107,10 +110,10 @@ export default function ItemList() {
       editer: name,
       rank: rank,
       remarks: remarks,
+      price: price,
       user: {
         name: name,
         count: count,
-        price: price
       },
     };
 
@@ -179,15 +182,31 @@ export default function ItemList() {
                 setRank(newValue);
               }}
             /><br /><br /><br />
-            <TextField
-              label="値段"
-              type="number"
-              id="price"
-              placeholder="購入予定金額"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />＊単価ではない<br /><br /><br />
+            {productPrice ? (
+              <>
+                <TextField
+                  label="値段"
+                  type="number"
+                  id="price"
+                  value={productPrice}
+                  placeholder="購入物の単価"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                /><br /><br /><br />
+              </>
+            ) : (<>
+              <TextField
+                label="値段"
+                type="number"
+                id="price"
+                placeholder="購入物の単価"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              /><br /><br /><br />
+            </>)}
+
             <TextField variant="standard" label="備考" type="text" id="remarks" placeholder="何かあれば" /><br /><br /><br />
 
             <Button type="submit" variant="contained" endIcon={<SendIcon />}>登録</Button><br /><br /><br />

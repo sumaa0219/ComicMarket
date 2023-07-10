@@ -20,15 +20,28 @@ export default function handler(req, res) {
     listLength.map((v) => {
 
       if (mainData["productName"] == targetArray[v]["productName"]) {
-        matchFlag = 1;
+        const userLength = Object.keys(targetArray[v]["user"])
+        let flagUser = "unmatch"
+        let flagNum = 0
+        userLength.map((x) => {
+          if (targetArray[v]["user"][x]["name"] == mainData.user.name) {
+            flagUser = "match"
+            flagNum = x
+          }
+        })
+        if (flagUser == "unmatch") {
+          matchFlag = 1;
 
-        newItem = {
-          name: mainData.user.name,
-          count: mainData.user.count,
-          price: mainData.user.price,
+          newItem = {
+            name: mainData.user.name,
+            count: mainData.user.count,
+          }
+
+          targetArray[v]["user"].push(newItem)
+        } else {
+          matchFlag = 1;
+          targetArray[v]["user"][flagNum]["count"] = mainData.user.count
         }
-
-        targetArray[v]["user"].push(newItem)
 
 
         if (mainData.rank > targetArray[v]["rank"]) {
@@ -39,7 +52,6 @@ export default function handler(req, res) {
         }
 
         targetArray[v]["count"] = Number(mainData.user.count) + Number(targetArray[v]["count"])
-        targetArray[0]["price"] = Number(mainData.user.price) + Number(targetArray[0]["price"])
       }
     })
     if (matchFlag === 1) {
@@ -52,19 +64,18 @@ export default function handler(req, res) {
         rank: mainData.rank,
         remarks: mainData.remarks,
         count: mainData.user.count,
+        price: mainData.price,
         user:
           [
             {
               name: mainData.user.name,
               count: mainData.user.count,
-              price: mainData.user.price,
             }
           ]
       }
       if (targetArray[0]["maxRank"] < mainData.rank) {
         targetArray[0]["maxRank"] = mainData.rank;
       }
-      targetArray[0]["price"] = Number(mainData.user.price) + Number(targetArray[0]["price"])
       targetArray.push(newItem);
     }
 

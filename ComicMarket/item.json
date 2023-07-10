@@ -14,24 +14,27 @@
     },
     {
       "productName": "新刊セット",
-      "editer": "すうま",
-      "rank": 5,
+      "editer": "杉山滉太",
+      "rank": 3,
       "remarks": "",
-      "count": 4,
+      "count": 3,
+      "price": "500",
       "user": [
         {
-          "name": "すうま",
-          "count": 1,
-          "price": ""
-        },
+          "name": "杉山滉太",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "productName": "新刊２",
+      "editer": "すうま",
+      "rank": 4,
+      "remarks": "",
+      "price": "100",
+      "user": [
         {
-          "name": "中村勇翔",
-          "price": ""
-        },
-        {
-          "name": "中村勇翔",
-          "count": 4,
-          "price": ""
+          "name": "すうま"
         }
       ]
     }
@@ -62,6 +65,20 @@
       "maxRank": 0,
       "buyer": "",
       "id": "456233sr0f"
+    }
+  ],
+  "3": [
+    {
+      "date": "土",
+      "NSWE": "西",
+      "place": "ふ67b",
+      "circleName": "電磁気",
+      "editer": "すうま",
+      "previewPath": "sample.png",
+      "price": 0,
+      "maxRank": 0,
+      "buyer": "",
+      "id": "3f2hpuof43g"
     }
   ]
 }
