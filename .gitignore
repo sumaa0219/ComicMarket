@@ -4,7 +4,6 @@ out
 comicmarket-firebase-adminsdk-5771a-ca5a7706d8.json
 .env.local
 Cloudflare_CA.pem
-firebase
 .env*
 .flaskenv*
 !.env.project
