@@ -15,6 +15,7 @@ export default function Handler(req, res) {
     const [jsonData, setJsonData] = useState();
     const [userList, setUserList] = useState();
     const { data: session } = useSession();
+    const [userJson, setUserJson] = useState();
 
     useEffect(() => {
         // Function to load JSON data
@@ -34,6 +35,12 @@ export default function Handler(req, res) {
             .then(data => {
                 setUserList(data)
             })
+
+        fetch(`/api/getData?type=json&path=user.json`)
+            .then((response) => response.json())
+            .then((data) => {
+                setUserJson(data);
+            });
 
         loadJson();
     }, []);
@@ -155,7 +162,7 @@ export default function Handler(req, res) {
                         {foundedItemNum.map((v) => {
                             return (
                                 <React.Fragment key={v}>
-                                    {makeItemList(jsonData, v, userList)}
+                                    {makeItemList(jsonData, v, userList, userJson)}
                                     <br />
                                 </React.Fragment>
                             );

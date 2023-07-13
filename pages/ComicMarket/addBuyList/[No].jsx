@@ -44,6 +44,7 @@ export default function ItemList() {
 
   useEffect(() => {
     fetchJsonData();
+    setCount(1);
   }, []);
 
   useEffect(() => {
@@ -101,7 +102,7 @@ export default function ItemList() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const name = document.getElementById("name").value;
+    const name = session.user.name;
     const remarks = document.getElementById("remarks").value;
     const price = document.getElementById("price").value;
 
@@ -211,7 +212,7 @@ export default function ItemList() {
 
             <Button type="submit" variant="contained" endIcon={<SendIcon />}>登録</Button><br /><br /><br />
           </form>
-          {makeItemList(jsonData, No, null)}
+          {makeItemList(jsonData, No, null, null)}
         </div>
       ) : (
         <div>

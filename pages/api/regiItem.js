@@ -50,8 +50,12 @@ export default function handler(req, res) {
             targetArray[0]["maxRank"] = targetArray[v]["rank"]
           }
         }
+        let count = 0
+        userLength.map((x) => {
+          count += targetArray[v]["user"][x]["count"]
 
-        targetArray[v]["count"] = Number(mainData.user.count) + Number(targetArray[v]["count"])
+        })
+        targetArray[v]["count"] = count
       }
     })
     if (matchFlag === 1) {
@@ -79,7 +83,18 @@ export default function handler(req, res) {
       targetArray.push(newItem);
     }
 
+    let sumPrice = 0
+    listLength.map((v) => { //購入物の数
+      const userLength = Object.keys(targetArray[v]["user"]) //購入登録したユーザの数
+      let sumCount = 0
+      userLength.map((x) => {
+        sumCount += targetArray[v]["user"][x]["count"]
+      })
+      sumPrice += targetArray[v]["price"] * sumCount
 
+    })
+
+    targetArray[0]["price"] = sumPrice
 
 
 

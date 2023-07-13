@@ -20,11 +20,14 @@ import React, { useState, useEffect } from 'react';
 
 const imageBasePath = "/api/getData?type=image&path=";
 
-export const makeItemList = (jsonData, No, userList) => {
+export const makeItemList = (jsonData, No, userList, userJson) => {
+
 
     function createData(productName, count, rank, remarks) {
         return { productName, count, rank, remarks };
     };
+
+
 
     if (jsonData == null) {
         return <></>
@@ -44,7 +47,6 @@ export const makeItemList = (jsonData, No, userList) => {
             } else {
                 buyer = "";
             }
-
 
 
 
@@ -79,16 +81,25 @@ export const makeItemList = (jsonData, No, userList) => {
                     });
             };
 
+
+
             let rows = [];
-            subDataNum.map((v) => {
-                let nameList = []
-                const nameListnum = Object.keys(SubData[v]["user"])
-                nameListnum.map((y) => {
-                    const string = SubData[v]["user"][y]["name"] + ","
-                    nameList.push(string)
+            if (userJson) {
+                subDataNum.map((v) => {
+                    let nameList = []
+                    const nameListnum = Object.keys(SubData[v]["user"])
+                    nameListnum.map((y) => {
+                        let originName = SubData[v]["user"][y]["name"]
+                        const string = userJson[originName]["name"] + "," //これ使う
+
+
+                        nameList.push(string)
+                    })
+                    rows.push(createData(SubData[v]["productName"], SubData[v]["count"], nameList, SubData[v]["remarks"]))
                 })
-                rows.push(createData(SubData[v]["productName"], SubData[v]["count"], nameList, SubData[v]["remarks"]))
-            })
+            }
+
+
 
 
 

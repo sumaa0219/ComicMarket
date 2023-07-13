@@ -8,18 +8,30 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
 import { Button, Grid } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 
 export default function Profile() {
     const [userInfo, setUserInfo] = useState();
     const [userIcon, setUserIcon] = useState();
     const { data: session } = useSession();
+    const [publicName, setPublicName] = useState();
 
     const style = {
         width: '100%',
         maxWidth: 360,
         bgcolor: 'background.paper',
     };
+
+    const handleChangeName = (event) => {
+        setPublicName(event.target.value);
+    };
+    const handleSubmitChangeName = (event) => {
+        fetch(`/api/getUserInfo?type=changeUserName&name=${session.user.name}&editName=${publicName}`)
+        location.reload()
+
+    }
 
     useEffect(() => {
         if (session) {
@@ -75,10 +87,28 @@ export default function Profile() {
                                 </List>
                             </Grid>
                             <Grid item xs={5}>
-                                <h1>ようこそ {userInfo.name} さん</h1>
+                                <TextField
+                                    label="固有名"
+                                    id="Sname"
+                                    value={session.user.name}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
                             </Grid>
                             <Grid item xs={5}>
-                                <h1>ようこそ {userInfo.name} さん</h1>
+                                <form onSubmit={handleSubmitChangeName}>
+                                    <TextField
+                                        label="表示名"
+                                        id="Sname"
+                                        defaultValue={userInfo.name}
+                                        onChange={handleChangeName}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
+                                    <Button type="submit" variant="contained" endIcon={<SendIcon />}>変更</Button>
+                                </form>
                             </Grid>
 
                         </Grid>

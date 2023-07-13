@@ -7,36 +7,38 @@
       "circleName": "まかろん大帝",
       "editer": "すうま",
       "previewPath": "sample.png",
-      "price": 0,
+      "price": 5200,
       "maxRank": 5,
-      "buyer": "中村勇翔",
+      "buyer": "モノクロ",
       "id": "uflae78uoeo"
     },
     {
       "productName": "新刊セット",
       "editer": "杉山滉太",
-      "rank": 3,
+      "rank": 4,
       "remarks": "",
-      "count": 3,
+      "count": 9,
       "price": "500",
       "user": [
         {
-          "name": "杉山滉太",
-          "count": 3
+          "name": "すうま",
+          "count": 6
         }
       ]
     },
     {
       "productName": "新刊２",
       "editer": "すうま",
-      "rank": 4,
+      "rank": 5,
       "remarks": "",
       "price": "100",
       "user": [
         {
-          "name": "すうま"
+          "name": "すうま",
+          "count": 7
         }
-      ]
+      ],
+      "count": 7
     }
   ],
   "1": [
@@ -47,10 +49,24 @@
       "circleName": "ハイテクペンケース",
       "editer": "Shunmpei Watanabe",
       "previewPath": "sample.png",
-      "price": 0,
-      "maxRank": 0,
+      "price": 3500,
+      "maxRank": 5,
       "buyer": "すうま",
       "id": "4tphsmkdep8"
+    },
+    {
+      "productName": "新刊セット＋グッツ",
+      "editer": "すうま",
+      "rank": 5,
+      "remarks": "",
+      "count": 1,
+      "price": "3500",
+      "user": [
+        {
+          "name": "すうま",
+          "count": 1
+        }
+      ]
     }
   ],
   "2": [

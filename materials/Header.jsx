@@ -139,11 +139,11 @@ export const Header = () => {
                                             <Typography textAlign="center">{setting}</Typography>
                                         </MenuItem>
                                     ))}
-                                    <MenuItem key="logout" onClick={() => signOut()}>
-                                        <Typography textAlign="center">LogOut</Typography>
-                                    </MenuItem>
                                     <MenuItem key="profile" onClick={handleProfile}>
                                         <Typography textAlign="center">Profile</Typography>
+                                    </MenuItem>
+                                    <MenuItem key="logout" onClick={() => signOut()}>
+                                        <Typography textAlign="center">LogOut</Typography>
                                     </MenuItem>
                                 </Menu>
                                 <Button color="inherit" onClick={handleOpenAddItem}>サークル追加</Button>
@@ -177,11 +177,11 @@ export const Header = () => {
                                                 <Typography textAlign="center">{setting}</Typography>
                                             </MenuItem>
                                         ))}
-                                        <MenuItem key="logout" onClick={() => signOut()}>
-                                            <Typography textAlign="center">LogOut</Typography>
-                                        </MenuItem>
                                         <MenuItem key="profile" onClick={handleProfile}>
                                             <Typography textAlign="center">Profile</Typography>
+                                        </MenuItem>
+                                        <MenuItem key="logout" onClick={() => signOut()}>
+                                            <Typography textAlign="center">LogOut</Typography>
                                         </MenuItem>
                                     </Menu>
                                 </Box>

@@ -24,11 +24,21 @@ export default function handler(req, res) {
 
         } if (type == "allUser") {
             let userList = Object.keys(users);
-            res.status(200).json(userList)
+            let List = []
+            userList.map((v) => {
+                List.push(users[v]["name"])
+            })
+            res.status(200).json(List)
 
         } if (type == "userInfo") {
             const userInfo = users[name]
             res.status(200).json(userInfo)
+        } if (type == "changeUserName") {
+            let USER = users
+            const editName = req.query.editName
+            USER[name]["name"] = editName
+            fs.writeFileSync(filePath, JSON.stringify(USER, null, 2));
+            res.status(200).end();
         }
 
     } else {

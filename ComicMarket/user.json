@@ -1,1 +1,44 @@
-{"すうま":{"name":"すうま","email":"sumaa0219@gmail.com","role":"admin","icon":"https://lh3.googleusercontent.com/a/AAcHTteDn5_KJITZk1DlO-MR8LHdAmdDoanxdS2p26P7Ku1DxQ=s96-c"},"山田智也":{"name":"山田智也","email":"yato200275@gmail.com","role":"admin","icon":"https://lh3.googleusercontent.com/a/AAcHTtdt932NIJq3P6Le--weIMzCj7vObH7-iuJUYBvHxlVk0g=s96-c"},"中村勇翔":{"name":"中村勇翔","email":"yuuto0916n@gmail.com","role":"admin","icon":"https://lh3.googleusercontent.com/a/AAcHTtfljb9Ixrzi5qJnC3v86DGDH10-CxSeq5mjpZ9_rvAWZ0GQ=s96-c"},"キャベツレタス":{"name":"キャベツレタス","email":"cabbage.lettuce.wireless@gmail.com","role":"member","icon":"https://lh3.googleusercontent.com/a/AAcHTtd3rd_yyRMsbUyidrs9FMf-2vWJBzpbBRVl5Eg_n35BjrM=s96-c"},"Shunmpei Watanabe":{"name":"Shunmpei Watanabe","email":"syun0130.w@gmail.com","role":"member","icon":"https://lh3.googleusercontent.com/a/AAcHTtdycj0aXzheRBKneabNnLnpP3T_9ylurc_-QzhooMe6Qg=s96-c"},"はんぞーもん":{"name":"はんぞーもん","email":"nori.abcdefg@gmail.com","role":"member","icon":"https://lh3.googleusercontent.com/a/AAcHTtflzgoqKNGSC1CTm0kvYQiD1ny0HGEsX8gqxvcsTzKdGJ0=s96-c"},"こなチーズ":{"name":"こなチーズ","email":"syun0130.w@gmail.com","role":"member","icon":"https://lh3.googleusercontent.com/a/AAcHTtdycj0aXzheRBKneabNnLnpP3T_9ylurc_-QzhooMe6Qg=s96-c"},"杉山滉太":{"name":"杉山滉太","email":"m20060@g.metro-cit.ac.jp","role":"member","icon":"https://lh3.googleusercontent.com/a/AAcHTte3cfuRO79ydw5E92YwC4Xrl4SXuWwvef_xBKrXhC3_=s96-c"}}
+{
+  "すうま": {
+    "name": "湊あくあしか勝たん",
+    "email": "sumaa0219@gmail.com",
+    "role": "admin",
+    "icon": "https://lh3.googleusercontent.com/a/AAcHTteDn5_KJITZk1DlO-MR8LHdAmdDoanxdS2p26P7Ku1DxQ=s96-c"
+  },
+  "山田智也": {
+    "name": "山D",
+    "email": "yato200275@gmail.com",
+    "role": "admin",
+    "icon": "https://lh3.googleusercontent.com/a/AAcHTtdt932NIJq3P6Le--weIMzCj7vObH7-iuJUYBvHxlVk0g=s96-c"
+  },
+  "中村勇翔": {
+    "name": "モノクロ",
+    "email": "yuuto0916n@gmail.com",
+    "role": "admin",
+    "icon": "https://lh3.googleusercontent.com/a/AAcHTtfljb9Ixrzi5qJnC3v86DGDH10-CxSeq5mjpZ9_rvAWZ0GQ=s96-c"
+  },
+  "キャベツレタス": {
+    "name": "キャベツレタス",
+    "email": "cabbage.lettuce.wireless@gmail.com",
+    "role": "member",
+    "icon": "https://lh3.googleusercontent.com/a/AAcHTtd3rd_yyRMsbUyidrs9FMf-2vWJBzpbBRVl5Eg_n35BjrM=s96-c"
+  },
+  "Shunmpei Watanabe": {
+    "name": "Shunmpei Watanabe",
+    "email": "syun0130.w@gmail.com",
+    "role": "member",
+    "icon": "https://lh3.googleusercontent.com/a/AAcHTtdycj0aXzheRBKneabNnLnpP3T_9ylurc_-QzhooMe6Qg=s96-c"
+  },
+  "はんぞーもん": {
+    "name": "はんぞーもん",
+    "email": "nori.abcdefg@gmail.com",
+    "role": "member",
+    "icon": "https://lh3.googleusercontent.com/a/AAcHTtflzgoqKNGSC1CTm0kvYQiD1ny0HGEsX8gqxvcsTzKdGJ0=s96-c"
+  },
+  "こなチーズ": {
+    "name": "こなチーズ",
+    "email": "syun0130.w@gmail.com",
+    "role": "member",
+    "icon": "https://lh3.googleusercontent.com/a/AAcHTtdycj0aXzheRBKneabNnLnpP3T_9ylurc_-QzhooMe6Qg=s96-c"
+  }
+}
