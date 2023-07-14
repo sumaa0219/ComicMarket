@@ -10,15 +10,16 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
-import { signOut, signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import style from "../pages/style/header.module.css";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 
 export const Header = () => {
     const [anchorElUser, setAnchorElUser] = useState();
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { data: session } = useSession();
+    const [session, setSession] = useState();
 
     const handleOpenItemList = () => {
         location.href = '/ComicMarket/itemList';
@@ -39,7 +40,7 @@ export const Header = () => {
     };
 
     const handleProfile = () => {
-        router.push(`/ComicMarket/profile/${session.user.name}`);
+        router.push(`/ComicMarket/profile/${session.displayName}`);
     };
 
     const handleMenuToggle = () => {
@@ -49,16 +50,33 @@ export const Header = () => {
     const settings = ['Account', 'Dashboard'];
 
     useEffect(() => {
+        // Firebaseを初期化
+
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // ログイン済みの場合の処理
+                setSession(user);
+                const { uid, displayName, email, photoURL } = user;
+                console.log('ユーザーID:', uid);
+                console.log('表示名:', displayName);
+                console.log('メールアドレス:', email);
+                console.log("icon", photoURL)
+            } else {
+                // ログアウト済みの場合の処理
+            }
+        });
+    }, []);
+    useEffect(() => {
         if (session) {
-            fetch(`/api/getUserInfo?type=search&name=${session.user.name}`)
+            fetch(`/api/getUserInfo?type=search&name=${session.displayName}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data["error"]) {
                         const newItem = {
-                            name: session.user.name,
-                            email: session.user.email,
+                            name: session.displayName,
+                            email: session.email,
                             role: "member",
-                            icon: session.user.image
+                            icon: session.photoURL
                         };
 
                         // JSONデータをファイルに書き込む
