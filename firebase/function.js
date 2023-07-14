@@ -1,9 +1,14 @@
 import 'firebase/compat/database';
-import { database } from '../firebase';
+import { database } from './firebase';
 
 
 
 export const addData = (path, data) => {
+    const newDataRef = database.ref(path);
+    return newDataRef.set(data);
+};
+
+export const addDataHash = (path, data) => { //ランダム値をつけて
     const newDataRef = database.ref(path).push();
     return newDataRef.set(data);
 };
@@ -30,7 +35,6 @@ export const fetchData = async (path) => {
     try {
         const snapshot = await database.ref(path).once('value');
         const data = snapshot.val();
-        console.log("kore", data);
         return data;
     } catch (error) {
         console.error(error);

@@ -2,18 +2,18 @@ import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 import { Button, Grid } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
 import Rating from '@mui/material/Rating';
 import Slider from '@mui/material/Slider';
 import Box from '@mui/material/Box';
 import Select from 'react-select';
-import { signOut, useSession } from 'next-auth/react';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 import { Header } from "../../../materials/Header";
 import { makeItemList } from "../../../materials/makeItemList";
+import { fetchData, addData } from "../../../../firebase/function"
+
 
 export default function ItemList() {
   const imageBasePath = "/api/getData?type=image&path=";
@@ -21,7 +21,7 @@ export default function ItemList() {
   const [rank, setRank] = useState();
   const [count, setCount] = useState();
   const [userName, setUserName] = useState();
-  const { data: session } = useSession();
+  const [session, setSession] = useState();
   const [productList, setProductList] = useState([]);
   const [productName, setProductName] = useState();
   const [productPrice, setProductPrice] = useState();
@@ -31,20 +31,23 @@ export default function ItemList() {
   const router = useRouter();
   const { No } = router.query;
 
-  const fetchJsonData = async () => {
-    try {
-      const response = await fetch('/api/getData?type=json&path=item.json');
-      const data = await response.json();
-      setJsonData(data);
-    } catch (error) {
-      console.error('データの取得エラー:', error);
-      return null;
-    }
-  };
+
 
   useEffect(() => {
-    fetchJsonData();
+    fetchData(`/item`).then((result) => {
+      setJsonData(result);
+    })
+
     setCount(1);
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // ログイン済みの場合の処理
+        setSession(user);
+      } else {
+        // ログアウト済みの場合の処理
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -83,7 +86,7 @@ export default function ItemList() {
 
   useEffect(() => {
     if (session) {
-      fetch(`/api/getUserInfo?type=userInfo&name=${session.user.name}`)
+      fetch(`/api/getUserInfo?type=userInfo&name=${session.displayName}`)
         .then((response) => response.json())
         .then((data) => {
           setUserName(data.name);
@@ -102,46 +105,33 @@ export default function ItemList() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const name = session.user.name;
+    const Name = session.displayName;
     const remarks = document.getElementById("remarks").value;
     const price = document.getElementById("price").value;
 
     const newItem = {
       productName: productName,
-      editer: name,
+      editer: Name,
       rank: rank,
       remarks: remarks,
       price: price,
-      user: {
-        name: name,
-        count: count,
-      },
     };
 
-    const updatedJsonData = JSON.stringify(newItem);
 
-    fetch('/api/regiItem', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        key: No,
-        data: updatedJsonData,
-      }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log('JSONファイルの書き込みが成功しました');
-          alert('登録完了');
-          location.reload();
-        } else {
-          console.error('JSONファイルの書き込みエラー:', response.status);
-        }
-      })
-      .catch((error) => {
-        console.error('JSONファイルの書き込みエラー:', error);
-      });
+
+    const checkDataPN = async () => {
+      const result = await fetchData(`/item/${No}/${productName}`);
+      if (result == null) {
+        return true
+      }
+      return false
+    }
+
+
+
+
+    addData(`/item/${No}/${productName}`, newItem)
+    // location.reload();
   };
 
   return (
@@ -150,7 +140,7 @@ export default function ItemList() {
         <div>
           {Header()}
           <form onSubmit={handleSubmit}>
-            <TextField variant="outlined" type="text" id="name" placeholder={session.user.name} value={userName} defaultValue={userName} /><br /><br /><br />
+            <TextField variant="outlined" type="text" id="name" placeholder={session.displayName} value={userName} defaultValue={userName} /><br /><br /><br />
             <Select
               inputId='productName'
               options={optionList}
