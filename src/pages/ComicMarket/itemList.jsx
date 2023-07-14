@@ -5,8 +5,7 @@ import { makeItemList } from "../../materials/makeItemList";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import styles from '../style/itemList.module.css';
-import { useSession } from 'next-auth/react';
-import ItemList from './addBuyList/[No]';
+import { fetchData, addData } from "../../../firebase/function"
 
 export default function Handler(req, res) {
     const router = useRouter();
@@ -14,33 +13,27 @@ export default function Handler(req, res) {
     const [foundedItemNum, setFoundedItemNum] = useState([]);
     const [jsonData, setJsonData] = useState();
     const [userList, setUserList] = useState();
-    const { data: session } = useSession();
     const [userJson, setUserJson] = useState();
+    const [session, setSession] = useState();
 
     useEffect(() => {
         // Function to load JSON data
         const loadJson = async () => {
             try {
-                const response = await fetch('/api/getData?type=json&path=item.json');
-                const data = await response.json();
-                setJsonData(data);
+                fetchData(`/item`).then((result) => {
+                    setJsonData(result);
+                })
+
             } catch (error) {
                 console.error('データの取得エラー:', error);
                 setJsonData(null);
             }
         };
 
-        fetch(`/api/getUserInfo?type=allUser`)
-            .then(response => response.json())
-            .then(data => {
-                setUserList(data)
-            })
-
-        fetch(`/api/getData?type=json&path=user.json`)
-            .then((response) => response.json())
-            .then((data) => {
-                setUserJson(data);
-            });
+        fetchData(`/user`).then((result) => {
+            setUserJson(result);
+            setUserList(Object.keys(result))
+        })
 
         loadJson();
     }, []);
@@ -67,22 +60,21 @@ export default function Handler(req, res) {
                 function singleSearch(word) {
                     Object.keys(jsonData).map((v) => {
                         let jsonString = JSON.stringify(jsonData[v])
-
                         if (jsonString.includes(word) == true) {
                             flag = "match"
-                            matchItemNum.push(Number(v));
+                            matchItemNum.push(v);
                         }
                     })
                 };
 
-                function multSearch(wordList, length) {
+                function multSearch(wordList, length) {      //かえろおぽおおお
                     for (let i = 0; i < length; i++) {
                         Object.keys(jsonData).map((v) => {
                             let jsonString = JSON.stringify(jsonData[v])
 
                             if (jsonString.includes(wordList[i]) == true) {
                                 flag = "ListMatch"
-                                matchItemNum.push(Number(v));
+                                matchItemNum.push(v);
                             }
                         })
                     }
@@ -121,8 +113,7 @@ export default function Handler(req, res) {
         } else {
             if (jsonData) {
 
-                const lengthKey = Object.keys(jsonData).length;
-                setFoundedItemNum([...Array(lengthKey)].map((_, i) => i));
+                setFoundedItemNum(Object.keys(jsonData));
             }
         }
     }, [jsonData]);

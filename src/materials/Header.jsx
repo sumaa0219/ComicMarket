@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import style from "../pages/style/header.module.css";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import { fetchData, addData } from "../../firebase/function"
 
 export const Header = () => {
     const [anchorElUser, setAnchorElUser] = useState();
@@ -47,6 +48,26 @@ export const Header = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
+    const handleGoogleSignIn = async () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+            await firebase.auth().signInWithPopup(provider);
+            // ログイン成功時の処理
+        } catch (error) {
+            // エラーハンドリング
+        }
+    };
+    const handleGoogleLogout = async () => {
+        try {
+            await firebase.auth().signOut();
+            console.log("logout")
+            location.reload()
+            // ログアウト成功時の処理
+        } catch (error) {
+            // エラーハンドリング
+        }
+    };
+
     const settings = ['Account', 'Dashboard'];
 
     useEffect(() => {
@@ -56,55 +77,30 @@ export const Header = () => {
             if (user) {
                 // ログイン済みの場合の処理
                 setSession(user);
-                const { uid, displayName, email, photoURL } = user;
-                console.log('ユーザーID:', uid);
-                console.log('表示名:', displayName);
-                console.log('メールアドレス:', email);
-                console.log("icon", photoURL)
             } else {
                 // ログアウト済みの場合の処理
             }
         });
     }, []);
+
+
     useEffect(() => {
         if (session) {
-            fetch(`/api/getUserInfo?type=search&name=${session.displayName}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data["error"]) {
-                        const newItem = {
-                            name: session.displayName,
-                            email: session.email,
-                            role: "member",
-                            icon: session.photoURL
-                        };
+            fetchData(`user/${session.displayName}`).then((result) => { //登録済みかどうか
+                if (result == null) {//未登録なら
+                    const newItem = {
+                        name: session.displayName,
+                        email: session.email,
+                        role: "member",
+                        icon: session.photoURL
+                    };
 
-                        // JSONデータをファイルに書き込む
-                        fetch('/api/signup', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(newItem), // newItemをJSON文字列に変換する
-                        })
-                            .then(response => {
-                                if (response.ok) {
-                                    console.log('JSONファイルの書き込みが成功しました');
-                                    alert("新規登録完了しました。ようこそコミケ管理サーバーへ\n" + session.user.name + "さん");
-                                    location.reload();
-                                } else {
-                                    console.error('JSONファイルの書き込みエラー:', response.status);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('JSONファイルの書き込みエラー:', error);
-                            });
-                    } else {
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+                    addData(`user/${session.displayName}`, newItem)
+
+                }
+            }).catch((error) => {
+                console.error(error)
+            })
         } else {
             console.log("no session")
         }
@@ -160,7 +156,7 @@ export const Header = () => {
                                     <MenuItem key="profile" onClick={handleProfile}>
                                         <Typography textAlign="center">Profile</Typography>
                                     </MenuItem>
-                                    <MenuItem key="logout" onClick={() => signOut()}>
+                                    <MenuItem key="logout" onClick={handleGoogleLogout}>
                                         <Typography textAlign="center">LogOut</Typography>
                                     </MenuItem>
                                 </Menu>
@@ -171,7 +167,7 @@ export const Header = () => {
                                 <Box sx={{ flexGrow: 0 }}>
                                     <Tooltip title="Open settings">
                                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                            <Avatar alt="Remy Sharp" src={session.user.image} />
+                                            <Avatar alt="Remy Sharp" src={session.photoURL} />
                                         </IconButton>
                                     </Tooltip>
                                     <Menu
@@ -198,13 +194,13 @@ export const Header = () => {
                                         <MenuItem key="profile" onClick={handleProfile}>
                                             <Typography textAlign="center">Profile</Typography>
                                         </MenuItem>
-                                        <MenuItem key="logout" onClick={() => signOut()}>
+                                        <MenuItem key="logout" onClick={handleGoogleLogout}>
                                             <Typography textAlign="center">LogOut</Typography>
                                         </MenuItem>
                                     </Menu>
                                 </Box>
                             ) : (
-                                <Button color="inherit" onClick={() => signIn()}>Login</Button>
+                                <Button color="inherit" onClick={handleGoogleSignIn}>Login</Button>
                             )}
                         </Toolbar>
                     </AppBar>

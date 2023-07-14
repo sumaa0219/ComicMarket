@@ -34,13 +34,13 @@ export const makeItemList = (jsonData, No, userList, userJson) => {
     } else {
         if (userList) {
             let buyer = "";
-            const lengthKey = Object.keys(userList).length;
-            let userListNum = [...Array(lengthKey)].map((_, i) => i)
+            let userListNum = Object.keys(userList)
 
-            const mainData = jsonData[No][0];
+            const mainData = jsonData[No]["circle"];
             const SubData = jsonData[No];
-            let subDatalength = Object.keys(jsonData[No]).length;
-            let subDataNum = [...Array(subDatalength - 1)].map((_, i) => i + 1);
+            let subDataNum = Object.keys(SubData);
+            subDataNum.shift()
+            console.log(subDataNum)
             let path = imageBasePath + mainData["previewPath"]
             if (mainData["buyer"]) {
                 buyer = mainData["buyer"];
@@ -79,7 +79,7 @@ export const makeItemList = (jsonData, No, userList, userJson) => {
                     .catch(error => {
                         console.error('JSONファイルの書き込みエラー:', error);
                     });
-            };
+            };//これも
 
 
 
@@ -87,9 +87,11 @@ export const makeItemList = (jsonData, No, userList, userJson) => {
             if (userJson) {
                 subDataNum.map((v) => {
                     let nameList = []
+                    console.log()
                     const nameListnum = Object.keys(SubData[v]["user"])
                     nameListnum.map((y) => {
                         let originName = SubData[v]["user"][y]["name"]
+                        console.log(SubData)
                         const string = userJson[originName]["name"] + "," //これ使う
 
 
