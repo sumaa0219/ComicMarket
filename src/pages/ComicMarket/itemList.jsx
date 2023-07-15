@@ -18,24 +18,15 @@ export default function Handler(req, res) {
 
     useEffect(() => {
         // Function to load JSON data
-        const loadJson = async () => {
-            try {
-                fetchData(`/item`).then((result) => {
-                    setJsonData(result);
-                })
-
-            } catch (error) {
-                console.error('データの取得エラー:', error);
-                setJsonData(null);
-            }
-        };
-
         fetchData(`/user`).then((result) => {
             setUserJson(result);
             setUserList(Object.keys(result))
         })
+        fetchData(`/item`).then((result) => {
+            setJsonData(result);
+        })
 
-        loadJson();
+
     }, []);
 
 

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Header } from "../../../materials/Header"
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -11,12 +10,17 @@ import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import { Button, Grid } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import { fetchData, addData, updateData, updateOneData } from "../../../../firebase/function"
 
 export default function Profile() {
     const [userInfo, setUserInfo] = useState();
     const [userIcon, setUserIcon] = useState();
-    const { data: session } = useSession();
+    const [session, setSession] = useState();
     const [publicName, setPublicName] = useState();
+    const router = useRouter();
+    const { name } = router.query;
 
     const style = {
         width: '100%',
@@ -28,18 +32,29 @@ export default function Profile() {
         setPublicName(event.target.value);
     };
     const handleSubmitChangeName = (event) => {
-        fetch(`/api/getUserInfo?type=changeUserName&name=${session.user.name}&editName=${publicName}`)
+        updateOneData(`/user/${name}`, "name", publicName)
+        alert("公開する名前を変更しました")
         location.reload()
 
     }
 
     useEffect(() => {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // ログイン済みの場合の処理
+                setSession(user);
+            } else {
+                // ログアウト済みの場合の処理
+            }
+        });
+    }, [])
+
+    useEffect(() => {
         if (session) {
-            fetch(`/api/getUserInfo?type=userInfo&name=${session.user.name}`)
-                .then(response => response.json())
-                .then(data => {
-                    setUserInfo(data)
-                })
+            fetchData(`/user/${name}`).then((result) => {
+                setUserInfo(result);
+            })
+
         }
     }, [session])
 
@@ -47,7 +62,7 @@ export default function Profile() {
         // setUserIcon(userInfo["icon"])
         if (session) {
             if (userInfo) {
-                setUserIcon(userInfo.icon)
+                setUserIcon(userInfo.photoURL)
             }
         }
 
@@ -90,7 +105,7 @@ export default function Profile() {
                                 <TextField
                                     label="固有名"
                                     id="Sname"
-                                    value={session.user.name}
+                                    value={session.displayName}
                                     InputLabelProps={{
                                         shrink: true,
                                     }}

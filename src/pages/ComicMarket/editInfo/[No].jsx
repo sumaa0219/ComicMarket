@@ -1,14 +1,13 @@
-//@ts-check
-
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
-import { MuiFileInput } from 'mui-file-input';
 import SendIcon from '@mui/icons-material/Send';
 import Button from '@mui/material/Button';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Header } from "../../../materials/Header"
-
+import { fetchData, addData, updateData, updateOneData } from "../../../../firebase/function"
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import { Header } from "../../../materials/Header";
 export default function ItemList() {
   const imageBasePath = "/api/getData?type=image&path=";
   const [data, setData] = useState(null);
@@ -20,25 +19,12 @@ export default function ItemList() {
 
   let mainDATA = "";
 
-  const Json = async () => {
-    try {
-      const response = await fetch('/api/getData?type=json&path=item.json');
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('データの取得エラー:', error);
-      return null;
-    }
-  };
+
 
   useEffect(() => {
-    Json()
-      .then(data => {
-        setjson(data);
-      })
-      .catch(error => {
-        console.error('データの取得エラー:', error);
-      });
+    fetchData(`/item`).then((result) => {
+      setjson(result);
+    })
   }, []);
 
   function makeItemList(No) {
@@ -46,7 +32,7 @@ export default function ItemList() {
       return ""; // データがない場合は空の文字列を返す
     } else {
 
-      mainDATA = json[No][0];
+      mainDATA = json[No]["circle"];
       const path = imageBasePath + mainDATA["previewPath"];
 
       return (
@@ -79,14 +65,12 @@ export default function ItemList() {
     const NSWE = document.getElementById("NSWE").value;
     const place = document.getElementById("place").value;
     const circleName = document.getElementById("circleName").value;
-    const productName = document.getElementById("productName").value;
-    const price = document.getElementById("price").value;
     let previewPath = "";
     try {
       previewPath = file.name;
     }
     catch (e) {
-      previewPath = json[No][0]["previewPath"];
+      previewPath = json[No]["circle"]["previewPath"];
     }
 
     // 新しいデータを作成
@@ -95,61 +79,22 @@ export default function ItemList() {
       NSWE: NSWE,
       place: place,
       circleName: circleName,
-      productName: productName,
       previewPath: previewPath + "",
-      price: price
     };
 
-    // 更新されたデータをJSONフォーマットに変換
-    const updatedJsonData = JSON.stringify(newItem);
-
     // JSONデータをファイルに書き込む
-    fetch('/api/editItem', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        key: No,
-        index: 0,
-        data: updatedJsonData
-      })
-    })
-      .then(response => {
-        if (response.ok) {
-          console.log('JSONファイルの書き込みが成功しました');
-          alert("登録完了")
-        } else {
-          console.error('JSONファイルの書き込みエラー:', response.status);
-        }
-      })
-      .catch(error => {
-        console.error('JSONファイルの書き込みエラー:', error);
-      });
-
-    fetch(`/api/deleteFile?fileName=${previewPath}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('リクエストに失敗しました。');
-        }
-        return response.json();
-      })
-      .then((data) => {
-      })
-      .catch((error) => {
-        console.error('リクエスト中にエラーが発生しました:', error);
-      });
+    updateData(`/item/${No}/circle`, newItem)
 
 
-    const formData = new FormData();
-    formData.append('file', file);
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
+    // const formData = new FormData();
+    // formData.append('file', file);
+    // const response = await fetch('/api/upload', {
+    //   method: 'POST',
+    //   body: formData,
+    // });
 
     setFile(null);
-    location.href = "/ComicMarket/itemList";
+    // location.href = "/ComicMarket/itemList";
   };
 
   return (
@@ -158,7 +103,7 @@ export default function ItemList() {
       <form onSubmit={handleSubmit}>
         {makeItemList(No)}<ArrowForwardIcon sx={{ fontSize: 100 }} />
         <img height="300" src={preview} /><br></br><br></br>
-        <MuiFileInput type="file" value={file} onChange={handleFileChange} />
+        <input type="file" value={file} onChange={handleFileChange} />
 
         <br></br><br></br>
         <Button type="submit" variant="contained" endIcon={<SendIcon />}>変更</Button>

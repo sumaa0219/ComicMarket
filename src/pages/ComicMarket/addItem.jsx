@@ -136,14 +136,14 @@ export default function UploadPage() {
         addData(`/item/${randomHash}/circle`, newItem);
 
         // ファイルをアップロードするリクエストを送信
-        // const formData = new FormData();
-        // formData.append('file', file);
-        // const response = fetch('/api/upload', {
-        //   method: 'POST',
-        //   body: formData,
-        // });
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
 
-        // setFile(null);
+        setFile(null);
         location.reload();
       }
     };

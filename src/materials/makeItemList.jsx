@@ -17,6 +17,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Rating from '@mui/material/Rating';
 import React, { useState, useEffect } from 'react';
+import { updateOneData } from '../../firebase/function';
 
 const imageBasePath = "/api/getData?type=image&path=";
 
@@ -54,45 +55,23 @@ export const makeItemList = (jsonData, No, userList, userJson) => {
                 // setBuyer(event.target.value);
                 buyer = userList[event.target.value];
 
-                const newItem = {
-                    key: No,
-                    index: 0,
-                    name: "buyer",
-                    value: buyer,
-                };
+                updateOneData(`/item/${No}/circle`, "buyer", buyer)
+                location.reload()
 
-                fetch('/api/editOneData', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(newItem), // newItemをJSON文字列に変換する
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            console.log('JSONファイルの書き込みが成功しました');
-                            location.reload();
-                        } else {
-                            console.error('JSONファイルの書き込みエラー:', response.status);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('JSONファイルの書き込みエラー:', error);
-                    });
-            };//これも
+            };
 
 
 
             let rows = [];
-            if (userJson) {
+            if (userJson != null) {
                 subDataNum.map((v) => {
                     let nameList = []
                     console.log()
                     const nameListnum = Object.keys(SubData[v]["user"])
                     nameListnum.map((y) => {
                         let originName = SubData[v]["user"][y]["name"]
-                        console.log(SubData)
-                        const string = userJson[originName]["name"] + "," //これ使う
+                        console.log(userJson)
+                        const string = userJson[originName]["name"] + ","
 
 
                         nameList.push(string)

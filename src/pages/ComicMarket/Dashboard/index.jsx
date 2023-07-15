@@ -1,4 +1,3 @@
-import { signOut, useSession } from 'next-auth/react';
 import { Header } from "../../../materials/Header";
 import { makeItemList } from "../../../materials/makeItemList";
 import { useRouter } from 'next/router';

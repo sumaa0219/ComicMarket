@@ -14,8 +14,8 @@ export const addDataHash = (path, data) => { //ランダム値をつけて
 };
 
 // データの編集
-export const updateData = (path, dataId, updatedData) => {
-    return database.ref(`${path}/${dataId}`).update(updatedData);
+export const updateData = (path, updatedData) => {
+    return database.ref(`${path}`).update(updatedData);
 };
 
 // データの削除
@@ -27,6 +27,7 @@ export const updateOneData = (path, dataId, updatedData) => {
     const dataToUpdate = {
         [dataId]: updatedData
     };
+    console.log(dataToUpdate)
     return database.ref(`${path}`).update(dataToUpdate);
 };
 

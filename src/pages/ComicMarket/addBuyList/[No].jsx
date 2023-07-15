@@ -12,7 +12,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import { Header } from "../../../materials/Header";
 import { makeItemList } from "../../../materials/makeItemList";
-import { fetchData, addData } from "../../../../firebase/function"
+import { fetchData, addData, updateData, updateOneData } from "../../../../firebase/function"
 
 
 export default function ItemList() {
@@ -34,10 +34,10 @@ export default function ItemList() {
 
 
   useEffect(() => {
+
     fetchData(`/item`).then((result) => {
       setJsonData(result);
     })
-
     setCount(1);
 
     firebase.auth().onAuthStateChanged((user) => {
@@ -55,6 +55,30 @@ export default function ItemList() {
       const listOption = Object.keys(jsonData[No]);
       listOption.shift();
       setOptionListNum(listOption);
+
+      //合計金額の計算
+      let addPrice = 0;
+      let addRank = 0;
+      let ItemList = Object.keys(jsonData[No])
+      let index = ItemList.indexOf("circle");
+      ItemList.splice(index, 1)
+      console.log(ItemList)
+      ItemList.map((v) => {
+        const baseRank = jsonData[No][v]["rank"]
+        if (addRank < baseRank) {
+          addRank = baseRank
+        }
+        const base = jsonData[No][v]["price"]
+        const ItemListUerList = Object.keys(jsonData[No][v]["user"])
+        ItemListUerList.map((y) => {
+          addPrice += Number(base) * Number(jsonData[No][v]["user"][y]["count"])
+
+        })
+      })
+      console.log(addPrice)
+      updateOneData(`/item/${No}/circle`, "price", addPrice)
+      updateOneData(`/item/${No}/circle`, "maxRank", addRank)
+
     }
   }, [jsonData, No]);
 
@@ -86,11 +110,9 @@ export default function ItemList() {
 
   useEffect(() => {
     if (session) {
-      fetch(`/api/getUserInfo?type=userInfo&name=${session.displayName}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setUserName(data.name);
-        });
+      fetchData(`/user/${session.displayName}`).then((result) => {
+        setUserName(result.name);
+      })
     }
   }, [session]);
 
@@ -117,6 +139,10 @@ export default function ItemList() {
       price: price,
     };
 
+    const userItem = {
+      name: Name,
+      count: count
+    };
 
 
     const checkDataPN = async () => {
@@ -126,12 +152,46 @@ export default function ItemList() {
       }
       return false
     }
+    const checkDataisUser = async () => {
+      const result = await fetchData(`/item/${No}/${productName}/user/${Name}`);
+      if (result == null) {
+        return true
+      }
+      return false
+    }
+
+    const pushData = async () => {
+      const chekc = await checkDataPN();
+      const checkUser = await checkDataisUser();
+      if (chekc === true) {
+        addData(`/item/${No}/${productName}`, newItem);
+        addData(`/item/${No}/${productName}/user/${Name}`, userItem);
+        alert("新規購入物を追加しました")
+      } else {
+        if (checkUser === true) {
+          addData(`/item/${No}/${productName}/user/${Name}`, userItem)
+          if (jsonData[No][productName]["rank"] < rank) {
+            updateOneData(`/item/${No}/${productName}`, "rank", rank)
+          }
+          alert("あなたの購入物に追加しました")
+        } else {
+          updateData(`/item/${No}/${productName}/user/${Name}`, userItem)
+          if (jsonData[No][productName]["rank"] < rank) {
+            updateOneData(`/item/${No}/${productName}`, "rank", rank)
+          }
+          alert("あなたの購入物情報を更新しました")
+        }
+      }
+
+
+      location.reload()
+    }
 
 
 
 
-    addData(`/item/${No}/${productName}`, newItem)
-    // location.reload();
+    pushData()
+
   };
 
   return (
