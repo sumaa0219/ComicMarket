@@ -29,6 +29,9 @@ interface Item {
   count: number;
   /** 優先度 */
   priority: number;
-  /** 購入物ID */
+
+  /** DB用 : 購入物ID */
   id?: string;
+  /** DB用 : 削除済み */
+  deleted?: boolean;
 }

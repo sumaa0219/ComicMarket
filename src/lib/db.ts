@@ -6,7 +6,6 @@ import { firestore } from "./firebase";
  * サークルをDBに追加
  */
 export async function addCircle(circle: Circle) {
-  // gen uuid
   const id = uuidv4()
   await setDoc(doc(firestore, "circles", id), {
     deleted: false,
@@ -35,6 +34,17 @@ export async function getAllCircles(): Promise<CircleWithID[]> {
     ...(doc.data() as Circle),
     id: doc.id,
   }))
-  // console.log(data)
   return data
+}
+
+/**
+ * 購入物をDBに追加
+ */
+export async function addItem(item: Item) {
+  const id = uuidv4()
+  await setDoc(doc(firestore, "items", id), {
+    deleted: false,
+    ...item,
+  })
+  return id
 }

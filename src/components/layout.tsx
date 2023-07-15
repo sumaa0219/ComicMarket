@@ -37,7 +37,7 @@ export default function Layout(props: LayoutProps) {
     <div className="drawer">
       <input id="page-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content">
-        <div className="navbar bg-base-100 px-4 shadow-lg">
+        <div className="navbar bg-base-100 px-4 shadow-lg sticky top-0">
           <div className="flex-none mr-4">
             <label htmlFor="page-drawer" className="btn btn-square btn-ghost drawer-button">
               <HumbergerIcon />
