@@ -18,15 +18,19 @@ export default function Layout(props: LayoutProps) {
   const menuItems: MenuItem[] = [
     {
       title: "サークル一覧",
-      href: "/list/circle"
+      href: "/circle/list"
+    },
+    {
+      title: "購入物一覧",
+      href: "/item/list"
     },
     {
       title: "サークル追加",
-      href: "/add/circle"
+      href: "/circle/add"
     },
     {
       title: "購入物追加",
-      href: "/add/item"
+      href: "/item/add"
     }
   ]
   return (

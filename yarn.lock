@@ -782,14 +782,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm-gnueabihf@npm:latest":
-  version: 13.2.4
-  resolution: "@next/swc-linux-arm-gnueabihf@npm:13.2.4"
-  checksum: 460e29e831dd0768064266ddc3a91e647f84f33ad9353095b5e3f41b397e0e2d3585b9ef1388cb1712fe5c10dcca1b4c6a0e648ec7d41f851019223f4688f9b8
-  conditions: os=linux & cpu=arm
-  languageName: node
-  linkType: hard
-
 "@next/swc-linux-arm64-gnu@npm:13.4.10":
   version: 13.4.10
   resolution: "@next/swc-linux-arm64-gnu@npm:13.4.10"
@@ -815,13 +807,6 @@ __metadata:
   version: 13.4.10
   resolution: "@next/swc-linux-x64-musl@npm:13.4.10"
   conditions: os=linux & cpu=x64 & libc=musl
-  languageName: node
-  linkType: hard
-
-"@next/swc-wasm-nodejs@npm:latest":
-  version: 13.4.10
-  resolution: "@next/swc-wasm-nodejs@npm:13.4.10"
-  checksum: cd1e1b1dcf9636723cfd9cfa7cd702931455b80191923423b6b8fb550a92cfcb746df0c7ecb00036dd6f16aaf3b4123185d7ca3a11b3f91267ec149cf1d7bd17
   languageName: node
   linkType: hard
 
