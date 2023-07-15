@@ -1,5 +1,5 @@
-
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: false,
   serverRuntimeConfig: {
     // SSL証明書と秘密鍵のパスを指定
@@ -9,5 +9,16 @@ module.exports = {
       },
     },
   },
-};
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.googleusercontent.com',
+        port: '',
+        pathname: '/a/**',
+      },
+    ],
+  },
+}
 
+module.exports = nextConfig
