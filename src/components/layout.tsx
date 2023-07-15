@@ -1,7 +1,11 @@
 import Link from "next/link";
-import { HTMLAttributes } from "react";
+import { Dispatch, HTMLAttributes, SetStateAction, createContext, useEffect, useState } from "react";
 import HumbergerIcon from "./HumbergerIcon";
 import Auth from "./auth";
+import { User } from "firebase/auth";
+import { useRouter } from "next/router";
+import { useAuth } from "@/hooks/auth";
+import { auth } from "@/lib/firebase";
 
 interface LayoutProps extends HTMLAttributes<HTMLDivElement> {
   /** ページタイトル */
@@ -13,6 +17,20 @@ interface MenuItem {
   /** メニューのリンク先 */
   href: string;
 }
+
+// export const AuthContext = createContext<{
+//   user: User | null;
+//   setUser: Dispatch<SetStateAction<User | null>>;
+// }>({
+//   user: null,
+//   setUser: () => { }
+// })
+
+const loginNeededPaths: RegExp[] = [
+  /^\/circle\/.*$/,
+  /^\/item\/.*$/,
+  /^\/dashboard$/
+]
 
 export default function Layout(props: LayoutProps) {
   const menuItems: MenuItem[] = [
@@ -33,6 +51,16 @@ export default function Layout(props: LayoutProps) {
       href: "/item/add"
     }
   ]
+
+  const router = useRouter()
+  const { state, login } = useAuth(auth);
+
+  useEffect(() => {
+    if (state === "logouted" && loginNeededPaths.some(path => path.test(router.pathname))) {
+      login()
+    }
+  }, [login, router, state])
+
   return (
     <div className="drawer">
       <input id="page-drawer" type="checkbox" className="drawer-toggle" />
@@ -53,7 +81,15 @@ export default function Layout(props: LayoutProps) {
           </div>
         </div>
         <div className="p-4 block">
-          {props.children}
+          {state === "logouted"
+            ? <div>
+              Waiting for Login ...
+            </div>
+            : state === "logined"
+              ? props.children
+              : <div>
+                Waiting for user data ...
+              </div>}
         </div>
       </div>
       <div className="drawer-side mt-16">

@@ -1,3 +1,4 @@
+import { circleWingToString, isMatchCondition } from "@/lib/utils";
 import { createContext, useContext, useState, useRef, useEffect, Fragment, ReactNode, Dispatch, SetStateAction } from "react";
 
 interface CircleSelectorComponentProps {
@@ -27,7 +28,7 @@ const FormDataContext = createContext({
       south: true,
     }
   },
-  setData: (data: CircleSelectorFormData) => { }
+  setData: () => {}
 } as {
   data: CircleSelectorFormData;
   setData: Dispatch<SetStateAction<CircleSelectorFormData>>;
@@ -109,25 +110,6 @@ export function CircleSelectorForm(props: CircleSelectorFormProps) {
   )
 }
 
-function isMatchCondition(condition: CircleSelectorFormData, data: CircleWithID): boolean {
-  console.log("condition:", condition)
-  return (
-    Object.keys(condition).length >= 4 &&
-    (
-      condition.name.length === 0 || data.name.includes(condition.name)
-    ) &&
-    (
-      condition.days[data.day]
-    ) &&
-    (
-      condition.wings[data.wing]
-    ) &&
-    (
-      condition.place.length === 0 || data.place.includes(condition.place)
-    )
-  )
-}
-
 export function CircleSelectorComponent(props: CircleSelectorComponentProps) {
   const [formData, setFormData] = useState<CircleSelectorFormData>({
     name: "",
@@ -170,11 +152,7 @@ export function CircleSelectorComponent(props: CircleSelectorComponentProps) {
             <div className="w-2/5 max-w-[40%] pl-2 overflow-hidden whitespace-nowrap overflow-ellipsis">{c.name}</div>
             <div className="w-1/5 flex justify-center">{c.day}日目</div>
             <div className="w-1/5 flex justify-center">
-              {({
-                west: "西",
-                east: "東",
-                south: "南",
-              })[c.wing]}
+              {circleWingToString(c.wing)}
             </div>
             <div className="w-1/5 flex justify-center">{c.place}</div>
           </li>

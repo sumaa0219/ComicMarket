@@ -1,15 +1,17 @@
 import Layout from "@/components/layout"
-import { addCircle, getAllCircles } from "@/lib/db"
+import { addCircle, getAllCircles, getAllItems } from "@/lib/db"
 import { NextPageContext } from "next"
 import { useEffect, useState } from "react"
 
 interface AddCircleProps {
-  circles: CircleWithID[]
+  circles: CircleWithID[];
+  items: ItemWithID[];
 }
 
 AddCircle.getInitialProps = async (ctx: NextPageContext): Promise<AddCircleProps> => {
   return {
-    circles: await getAllCircles()
+    circles: await getAllCircles(),
+    items: await getAllItems(),
   }
 }
 
@@ -20,7 +22,6 @@ export default function AddCircle(props: AddCircleProps) {
   useEffect(()=>{
     (async ()=>{
       if (circle !== null) {
-        console.log("circle", circle)
         const matches = {
           name: props.circles.some(c => c.name === circle.name),
           place: props.circles.some(c => c.place === circle.place)

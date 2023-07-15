@@ -35,3 +35,22 @@ interface Item {
   /** DB用 : 削除済み */
   deleted?: boolean;
 }
+
+interface ItemWithID extends Item {
+  id: string
+}
+
+/** サークル検索条件 */
+interface CircleCondition {
+  name: string;
+  place: string;
+  days: {
+    "1": boolean;
+    "2": boolean;
+  };
+  wings: {
+    west: boolean;
+    east: boolean;
+    south: boolean;
+  };
+}

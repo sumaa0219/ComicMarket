@@ -48,3 +48,23 @@ export async function addItem(item: Item) {
   })
   return id
 }
+
+/**
+ * 全ての購入物情報を取得
+ */
+export async function getAllItems(): Promise<ItemWithID[]> {
+  const data: ItemWithID[] = (await getDocs(collection(firestore, "items"))).docs.map(doc => ({
+    ...(doc.data() as Item),
+    id: doc.id,
+  }))
+  return data
+}
+
+/**
+ * IDから購入物情報を取得
+ * @param id 購入物ID
+ */
+export async function getItem(id: string) {
+  const docRef = await getDoc(doc(firestore, "items", id))
+  return docRef.data()
+}

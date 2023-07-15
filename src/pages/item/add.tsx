@@ -1,6 +1,6 @@
 import CircleSelector from "@/components/circleSelector"
 import Layout from "@/components/layout"
-import { addCircle, addItem, getAllCircles } from "@/lib/db"
+import { addCircle, addItem, getAllCircles, getAllItems } from "@/lib/db"
 import { Metadata, NextPageContext } from "next"
 import { useEffect, useState } from "react"
 
@@ -9,12 +9,14 @@ export const metadata: Metadata = {
 }
 
 interface AddItemProps {
-  circles: CircleWithID[]
+  circles: CircleWithID[];
+  items?: Item[];
 }
 
 AddItem.getInitialProps = async (ctx: NextPageContext): Promise<AddItemProps> => {
   return {
-    circles: await getAllCircles()
+    circles: await getAllCircles(),
+    items: await getAllItems(),
   }
 }
 
@@ -27,7 +29,6 @@ export default function AddItem(props: AddItemProps) {
   useEffect(() => {
     (async () => {
       if (item !== null) {
-        // console.log("circle", circle)
         // const matches = {
         //   name: props.circles.some(c => c.name === circle.name),
         //   place: props.circles.some(c => c.place === circle.place)
@@ -38,7 +39,7 @@ export default function AddItem(props: AddItemProps) {
         } else {
           await addItem(item)
           setItem(null)
-          setItemAddMessage("サークルが追加されました")
+          setItemAddMessage("購入物が追加されました")
           await new Promise(resolve => setTimeout(resolve, 3000))
           setItemAddMessage("")
         }
@@ -62,7 +63,6 @@ export default function AddItem(props: AddItemProps) {
       >
 
         <div className="flex flex-col w-1/3 border rounded-lg border-gray-500 p-12 mx-auto">
-
           <label className="label" htmlFor="itemName">
             <span className="label-text">サークル</span>
           </label>

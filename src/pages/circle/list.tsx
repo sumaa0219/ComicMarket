@@ -1,7 +1,9 @@
 import Layout from "@/components/layout"
 import { getAllCircles } from "@/lib/db"
+import { circleWingToString, isMatchCondition } from "@/lib/utils"
 import { Metadata, NextPageContext } from "next"
 import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
 
 export const metadata: Metadata = {
   title: "購入物追加",
@@ -19,9 +21,36 @@ ListCircle.getInitialProps = async (ctx: NextPageContext): Promise<ListCirclePro
 }
 
 export default function ListCircle(props: ListCircleProps) {
+  const [circles, setCircles] = useState<CircleWithID[]>(props.circles)
+  const [condition, setCondition] = useState<CircleCondition>({
+    name: "",
+    place: "",
+    days: {
+      "1": true,
+      "2": true,
+    },
+    wings: {
+      west: true,
+      east: true,
+      south: true,
+    }
+  })
+  useEffect(() => {
+    setCircles(props.circles.filter(c => isMatchCondition(condition, c)))
+  }, [condition, props.circles])
+  const formRef = useRef<HTMLFormElement>(null)
   return (
-    <Layout>
-      <form className="flex flex-row mb-4 items-center">
+    <Layout title="サークル一覧">
+      <form className="flex flex-row mb-4 items-center" ref={formRef} onChange={e => {
+        if (formRef.current) {
+          setCondition({
+            name: formRef.current.circleName.value,
+            place: formRef.current.circlePlace.value,
+            days: Object.fromEntries(Array.from<HTMLInputElement>(formRef.current.circleDay).map(d => [d.value, d.checked])),
+            wings: Object.fromEntries(Array.from<HTMLInputElement>(formRef.current.circleWing).map(d => [d.value, d.checked])),
+          } as CircleCondition)
+        }
+      }}>
         <div>絞り込み : </div>
         <div className="ml-2">
           <label className="label" htmlFor="circleName">
@@ -70,7 +99,7 @@ export default function ListCircle(props: ListCircleProps) {
             </tr>
           </thead>
           <tbody>
-            {props.circles.map((c, i) => (
+            {circles.map((c, i) => (
               <tr className="" key={i}>
                 <td className="">
                   <Link href={`/circle/${c.id}`} className="w-full">
@@ -78,11 +107,7 @@ export default function ListCircle(props: ListCircleProps) {
                   </Link>
                 </td>
                 <td>{c.day}日目</td>
-                <td>{({
-                  west: "西",
-                  east: "東",
-                  south: "南",
-                })[c.wing]}</td>
+                <td>{circleWingToString(c.wing)}</td>
                 <td>{c.place}</td>
               </tr>
             ))}

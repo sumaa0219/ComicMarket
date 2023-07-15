@@ -1,9 +1,9 @@
 import { Auth, UserCredential, signInWithCredential, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useContext } from "react";
 
 export const useAuth = (auth: Auth) => {
   const [state, setState] = useState<'idel' | 'progress' | 'logined' | 'logouted' | 'error'>('idel')
-  const [user, setUser] = useState<User | null>(null);
+  const [_user, setUser] = useState<User | null>(null);
   const login = useCallback(()=>{
     (async () => {
       setState('progress')
@@ -11,7 +11,7 @@ export const useAuth = (auth: Auth) => {
       setUser(result.user)
       setState('logined')
     })()
-  }, [auth])
+  }, [auth, setUser])
   const logout = useCallback(()=>{
     (async () => {
       setState('progress')
@@ -19,7 +19,7 @@ export const useAuth = (auth: Auth) => {
       setUser(null)
       setState('logouted')
     })()
-  }, [auth])
+  }, [auth, setUser])
 
   useEffect(()=>{
     onAuthStateChanged(auth, user => {
@@ -30,8 +30,8 @@ export const useAuth = (auth: Auth) => {
         setState('logouted')
       }
     })
-  }, [auth])
-  return { state, user, login, logout }
+  }, [auth, setUser])
+  return { state, user: _user, login, logout }
 }
 
 export const useAuth_ = (auth: Auth) => {

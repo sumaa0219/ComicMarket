@@ -9,7 +9,6 @@ import { Fragment } from "react";
 export default function Auth() {
   const { state, user, login, logout } = useAuth(auth);
   return (<Fragment>
-    {/* {state} */}
     {state === "logined"
       ?
       <div className="flex flex-row">
@@ -28,7 +27,7 @@ export default function Auth() {
             </div>
           </button>
         </Link>
-        <button className="btn btn-square" onClick={() => logout()}>
+        <button className="btn btn-square ml-2" onClick={() => logout()}>
           <FontAwesomeIcon icon={faRightFromBracket} className="text-2xl" />
         </button>
       </div>
