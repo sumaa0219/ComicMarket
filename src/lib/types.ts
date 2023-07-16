@@ -66,3 +66,7 @@ export interface Userdata {
   name: string;
   photoURL: User["photoURL"];
 }
+
+export interface UserdataWithID extends Userdata {
+  id: string;
+}

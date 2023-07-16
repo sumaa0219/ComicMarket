@@ -1,22 +1,24 @@
 import CircleSelector from "@/components/circleSelector";
 import Layout from "@/components/layout";
 import CircleCard from "@/lib/circleCard";
-import { getAllCircles, getAllItems } from "@/lib/db";
-import { CircleWithID, ItemWithID, CircleCondition } from "@/lib/types";
+import { getAllCircles, getAllItems, getAllUsers, getUser } from "@/lib/db";
+import { CircleCondition, CircleWithID, ItemWithID, Userdata, UserdataWithID } from "@/lib/types";
 import { circleWingToString, isMatchCondition } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Link from "next/link";
-import { useState, useEffect, useRef, Fragment } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 interface ItemListProps {
   circles: CircleWithID[];
   items: ItemWithID[];
+  users: UserdataWithID[];
 }
 
 ItemList.getInitialProps = async (ctx: NextPageContext): Promise<ItemListProps> => {
   return {
     circles: await getAllCircles(),
     items: await getAllItems(),
+    users: await getAllUsers(),
   }
 }
 
@@ -142,7 +144,11 @@ export default function ItemList(props: ItemListProps) {
                   {item.price}円
                 </td>
                 <td className="">
-                  {item.users.map((user, i) => (`${user.uid}`))}
+                  {item.users.map((user, i) => (
+                    <Link href={`/user/${user.uid}`} key={i} className="after:content-[','] mr-2">
+                      {props.users.find(u => u.id === user.uid)?.name}
+                    </Link>
+                  ))}
                 </td>
               </tr>
             ))}

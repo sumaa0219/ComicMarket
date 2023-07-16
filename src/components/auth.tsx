@@ -12,7 +12,7 @@ export default function Auth() {
     {state === "logined"
       ?
       <div className="flex flex-row">
-        <Link href="/dashboard" passHref>
+        <Link href={`/user/${user?.uid}`} passHref>
           <button className="btn btn-square">
             <div className="avatar">
               <div className="w-12 rounded-full">

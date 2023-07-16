@@ -1,24 +1,50 @@
 import Layout from "@/components/layout";
-import { getItem } from "@/lib/db";
-import { ItemWithID } from "@/lib/types";
+import { getAllUsers, getItem } from "@/lib/db";
+import { ItemWithID, UserdataWithID } from "@/lib/types";
 import { NextPageContext } from "next";
+import Link from "next/link";
 
 interface ItemProps {
-  item: ItemWithID
+  item: ItemWithID,
+  users: UserdataWithID[];
 }
 
 Item.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
   const { itemId } = ctx.query
-  const item = await getItem(itemId as string) as ItemWithID
   return {
-    item
+    item: await getItem(itemId as string) as ItemWithID,
+    users: await getAllUsers(),
   }
 }
 
 export default function Item(props: ItemProps) {
-  return (<Layout>
+  return (<Layout title="購入物詳細">
     <div className="text-2xl">{props.item.name}</div>
-    <div className="text-xl">価格 : {props.item.price}</div>
-    以下に購入者と購入数を表にする
+    <div className="text-xl">{props.item.price}円</div>
+
+    <div className="w-96 overflow-x-auto">
+      <table className="table">
+        <thead>
+          <tr>
+            <th>購入者</th>
+            <th>個数</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            props.item.users.map((user, i) => (
+              <tr key={i}>
+                <td>
+                  <Link href={`/user/${user.uid}`}>
+                    {props.users.find(u => u.id === user.uid)?.name}
+                  </Link>
+                </td>
+                <td>{user.count}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
   </Layout>)
 }

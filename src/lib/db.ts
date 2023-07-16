@@ -2,7 +2,7 @@ import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { firestore } from "./firebase";
 import { User } from "firebase/auth";
-import { Circle, CircleWithID, Item, ItemWithID, Userdata } from "./types";
+import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID } from "./types";
 
 /**
  * サークルをDBに追加
@@ -113,7 +113,21 @@ export async function addUser(user: User) {
  * IDから購入物情報を取得
  * @param id 購入物ID
  */
-export async function getUser(id: string) {
+export async function getUser(id: string): Promise<UserdataWithID> {
   const docRef = await getDoc(doc(firestore, "users", id))
-  return docRef.data() as Userdata
+  return {
+    ...docRef.data() as Userdata,
+    id,
+  }
+}
+
+/**
+ * 全ての購入物情報を取得
+ */
+export async function getAllUsers(): Promise<UserdataWithID[]> {
+  const data = (await getDocs(collection(firestore, "users"))).docs.map(doc => ({
+    ...(doc.data() as Userdata),
+    id: doc.id,
+  }))
+  return data
 }
