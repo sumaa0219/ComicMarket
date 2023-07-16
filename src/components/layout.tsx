@@ -26,10 +26,8 @@ interface MenuItem {
 //   setUser: () => { }
 // })
 
-const loginNeededPaths: RegExp[] = [
-  /^\/circle\/.*$/,
-  /^\/item\/.*$/,
-  /^\/dashboard$/
+const loginNotNeededPaths: RegExp[] = [
+  /^\/login\/?.*$/,
 ]
 
 export default function Layout(props: LayoutProps) {
@@ -52,8 +50,8 @@ export default function Layout(props: LayoutProps) {
   const { state, login } = useAuth(auth);
 
   useEffect(() => {
-    if (state === "logouted") {
-      login()
+    if (state === "logouted" && !loginNotNeededPaths.some(path => path.test(router.pathname))) {
+      router.push("/login")
     }
   }, [login, router, state])
 
@@ -77,10 +75,10 @@ export default function Layout(props: LayoutProps) {
           </div>
         </div>
         <div className="p-4 block">
-          {state === "logined"
+          {(state === "logouted" || !loginNotNeededPaths.some(path => path.test(router.pathname)))
             ? props.children
             : <div>
-              Waiting for user data ...
+              Waiting for user data ... 
             </div>}
         </div>
       </div>
