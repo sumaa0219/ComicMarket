@@ -1,6 +1,11 @@
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.NODE_ENV === "production",
+  openAnalyzer: false
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  // reactStrictMode: false,
   serverRuntimeConfig: {
     // SSL証明書と秘密鍵のパスを指定
     api: {
@@ -21,4 +26,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = withBundleAnalyzer(nextConfig)
