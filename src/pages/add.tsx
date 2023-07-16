@@ -25,7 +25,7 @@ export default function Add(props: AddProps) {
   const [circle, setCircle] = useState<CircleWithID | null>(null)
   const [item, setItem] = useState<ItemWithID | null>(null)
   const { user } = useAuth(auth)
-  return (<Layout>
+  return (<Layout title="購入物追加">
     <div className="w-full h-full mt-4 mb-20 p-4">
       <div className="flex flex-col w-1/3 border rounded-lg border-gray-500 p-12 mx-auto">
         {

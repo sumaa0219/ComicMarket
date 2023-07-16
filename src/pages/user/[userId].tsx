@@ -51,7 +51,11 @@ export default function Circle(props: ItemProps) {
         </thead>
         <tbody>
           {props.items.length === 0
-            ? "No data found"
+            ? <tr>
+              <td>
+                データなし
+              </td>
+            </tr>
             : props.items.map((item, i) => item.users.map((user, j) => (
               <tr key={`${i}-${j}`}>
                 <td>

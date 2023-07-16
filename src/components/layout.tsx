@@ -18,14 +18,6 @@ interface MenuItem {
   href: string;
 }
 
-// export const AuthContext = createContext<{
-//   user: User | null;
-//   setUser: Dispatch<SetStateAction<User | null>>;
-// }>({
-//   user: null,
-//   setUser: () => { }
-// })
-
 const loginNotNeededPaths: RegExp[] = [
   /^\/login\/?.*$/,
 ]
@@ -65,9 +57,19 @@ export default function Layout(props: LayoutProps) {
               <HumbergerIcon />
             </label>
           </div>
-          <div className="flex-1">
+          <div className="flex-[2] min-w-96">
             <Link href="/" className="text-xl">
               {props.title ?? "C102委託管理"}
+            </Link>
+          </div>
+          <div className="flex-[1]">
+            <Link href="/add" className="btn">
+              購入物追加
+            </Link>
+          </div>
+          <div className="flex-[8]">
+            <Link href="/item/list" className="btn">
+              購入物一覧
             </Link>
           </div>
           <div className="flex-none">
