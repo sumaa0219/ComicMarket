@@ -1,10 +1,9 @@
-import { useAuth } from "@/hooks/auth"
-import { auth } from "@/lib/firebase"
+import { useAuth } from "@/hooks/auth";
+import { addBuyer, addItem } from "@/lib/db";
+import { auth } from "@/lib/firebase";
 import { CircleWithID, ItemWithID } from "@/lib/types";
 import { Fragment, useRef, useState } from "react";
 import ItemSelector from "../itemSelector";
-import { addBuyer, addItem } from "@/lib/db";
-
 
 interface AddItemProps {
   items?: ItemWithID[];
@@ -79,11 +78,11 @@ export default function AddItem(props: AddItemProps) {
           <span className="label-text">優先度</span>
         </label>
         <div className="rating mb-8">
-          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={1} disabled={sending} />
-          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={2} disabled={sending} />
-          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={3} disabled={sending} defaultChecked />
-          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={4} disabled={sending} />
-          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={5} disabled={sending} />
+          <input type="radio" name="priority" className="mask bg-primary dark:bg-orange-400 mask-star" value={1} disabled={sending} />
+          <input type="radio" name="priority" className="mask bg-primary dark:bg-orange-400 mask-star" value={2} disabled={sending} />
+          <input type="radio" name="priority" className="mask bg-primary dark:bg-orange-400 mask-star" value={3} disabled={sending} defaultChecked />
+          <input type="radio" name="priority" className="mask bg-primary dark:bg-orange-400 mask-star" value={4} disabled={sending} />
+          <input type="radio" name="priority" className="mask bg-primary dark:bg-orange-400 mask-star" value={5} disabled={sending} />
         </div>
       </form>
 
