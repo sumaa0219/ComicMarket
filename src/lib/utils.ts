@@ -1,3 +1,5 @@
+import { CircleCondition, CircleWithID } from "./types"
+
 export function isMatchCondition(condition: CircleCondition, data: CircleWithID): boolean {
   return (
     Object.keys(condition).length >= 4 &&

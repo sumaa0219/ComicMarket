@@ -1,3 +1,4 @@
+import { CircleWithID } from "@/lib/types";
 import { circleWingToString, isMatchCondition } from "@/lib/utils";
 import { createContext, useContext, useState, useRef, useEffect, Fragment, ReactNode, Dispatch, SetStateAction } from "react";
 
@@ -170,9 +171,9 @@ export default function CircleSelector({
   const modalRef = useRef<HTMLDialogElement>(null)
   return (
     <Fragment>
-      <button {...props} className={`btn ${props.className}`} onClick={() => modalRef.current?.showModal()}>サークルを選択</button>
+      <button {...props} className={`btn w-full ${props.className}`} onClick={() => modalRef.current?.showModal()}>サークルを選択</button>
       <dialog id="my_modal_2" className="modal" ref={modalRef}>
-        <div className="modal-box p-0">
+        <div className="modal-box p-0 h-4/5">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onPointerDown={() => modalRef.current?.close()}>✕</button>
           <CircleSelectorComponent {...props} circles={circles} onChange={c => {
             modalRef.current?.close()

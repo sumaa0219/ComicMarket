@@ -43,20 +43,16 @@ export default function Layout(props: LayoutProps) {
       href: "/item/list"
     },
     {
-      title: "サークル追加",
-      href: "/circle/add"
+      title: "購入物・サークル追加",
+      href: "/add"
     },
-    {
-      title: "購入物追加",
-      href: "/item/add"
-    }
   ]
 
   const router = useRouter()
   const { state, login } = useAuth(auth);
 
   useEffect(() => {
-    if (state === "logouted" && loginNeededPaths.some(path => path.test(router.pathname))) {
+    if (state === "logouted") {
       login()
     }
   }, [login, router, state])
@@ -81,15 +77,11 @@ export default function Layout(props: LayoutProps) {
           </div>
         </div>
         <div className="p-4 block">
-          {state === "logouted"
-            ? <div>
-              Waiting for Login ...
-            </div>
-            : state === "logined"
-              ? props.children
-              : <div>
-                Waiting for user data ...
-              </div>}
+          {state === "logined"
+            ? props.children
+            : <div>
+              Waiting for user data ...
+            </div>}
         </div>
       </div>
       <div className="drawer-side mt-16">

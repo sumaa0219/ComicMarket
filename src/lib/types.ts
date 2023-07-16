@@ -1,5 +1,7 @@
+import { User } from "firebase/auth";
+
 /** サークル */
-interface Circle {
+export interface Circle {
   /** サークル名 */
   name: string;
   /** サークル出店日 */
@@ -13,22 +15,27 @@ interface Circle {
   deleted?: boolean;
 }
 
-interface CircleWithID extends Circle {
+export interface CircleWithID extends Circle {
   id: string
 }
 
 /** 購入物 */
-interface Item {
+export interface Item {
   /** サークルID */
   circleId: string;
   /** 商品名 */
   name: string;
   /** 価格 */
   price: number;
-  /** 個数 */
-  count: number;
-  /** 優先度 */
-  priority: number;
+
+  users: {
+    /** 購入者のUID */
+    uid: string;
+    /** 個数 */
+    count: number;
+    /** 優先度 */
+    priority: number;
+  }[];
 
   /** DB用 : 購入物ID */
   id?: string;
@@ -36,12 +43,12 @@ interface Item {
   deleted?: boolean;
 }
 
-interface ItemWithID extends Item {
+export interface ItemWithID extends Item {
   id: string
 }
 
 /** サークル検索条件 */
-interface CircleCondition {
+export interface CircleCondition {
   name: string;
   place: string;
   days: {
@@ -53,4 +60,9 @@ interface CircleCondition {
     east: boolean;
     south: boolean;
   };
+}
+
+export interface Userdata {
+  name: string;
+  photoURL: User["photoURL"];
 }

@@ -1,3 +1,6 @@
+import { Circle } from "./types";
+import { circleWingToString } from "./utils";
+
 interface CircleCardProps {
   circle: Circle;
   onUnselect?: () => void;
@@ -9,11 +12,7 @@ export default function CircleCard(props: CircleCardProps) {
         <div className="flex flex-col">
           <h2 className="card-title">{props.circle.name}</h2>
           <p>
-            {props.circle.day}日目 {({
-              west: "西",
-              east: "東",
-              south: "南",
-            })[props.circle.wing]} {props.circle.place}
+            {props.circle.day}日目 {circleWingToString(props.circle.wing)} {props.circle.place}
           </p>
         </div>
         <div className="card-actions justify-end ml-2">

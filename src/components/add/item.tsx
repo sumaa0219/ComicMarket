@@ -1,0 +1,117 @@
+import { useAuth } from "@/hooks/auth"
+import { auth } from "@/lib/firebase"
+import { CircleWithID, ItemWithID } from "@/lib/types";
+import { Fragment, useRef, useState } from "react";
+import ItemSelector from "../itemSelector";
+import { addBuyer, addItem } from "@/lib/db";
+
+
+interface AddItemProps {
+  items?: ItemWithID[];
+  circle?: CircleWithID | null;
+  disabled?: boolean;
+  onAdd?: (item: ItemWithID) => void;
+}
+export default function AddItem(props: AddItemProps) {
+  const { user } = useAuth(auth)
+  const [item, setItem] = useState<ItemWithID | null>(null)
+  const newItemFormRef = useRef<HTMLFormElement>(null)
+  const addFormRef = useRef<HTMLFormElement>(null)
+  const [newItem, setNewItem] = useState({
+    name: "",
+    price: 500
+  })
+
+  const [sending, setSending] = useState(false)
+
+  return props.items && props.circle && (
+    <Fragment>
+      {
+        item
+          ? <div className="flex flex-col">
+            <div className="text-lg flex justify-center">
+              {item.name}
+            </div>
+            <div className="flex justify-center mb-2">
+              {item.price}円
+            </div>
+            <button className="btn mb-2" onClick={() => { setItem(null) }} disabled={sending}>選択解除</button>
+          </div>
+          : <ItemSelector items={props.items.filter(item => item.circleId === props.circle?.id)} onChange={item => {
+            setItem(item)
+          }} />
+      }
+      {
+        !item && <Fragment>
+          <div className="divider">または</div>
+          <form ref={newItemFormRef} onChange={() => {
+            setNewItem({
+              name: newItemFormRef.current?.itemName.value,
+              price: parseInt(newItemFormRef.current?.itemPrice.value),
+            })
+          }} className="form-control mb-6" onSubmit={e => e.preventDefault()}>
+            <label className="label" htmlFor="itemName">
+              <span className="label-text">購入物名</span>
+            </label>
+            <input type="text" id="itemName" placeholder="例 : 新刊セット" className="input input-bordered" required disabled={sending} />
+
+            <label className="label" htmlFor="itemPrice">
+              <span className="label-text">価格</span>
+            </label>
+            <input type="number" id="itemPrice" placeholder="例 : 500" className="input input-bordered" defaultValue={500} required disabled={sending} />
+          </form>
+        </Fragment>
+      }
+      <div className="divider"></div>
+      <form className="form-control" onSubmit={e => e.preventDefault()} ref={addFormRef} onChange={() => {
+        const buyData = {
+          userId: user?.uid,
+          count: addFormRef.current?.itemCount.value,
+          priority: addFormRef.current?.priority.value,
+        }
+      }}>
+        <label className="label" htmlFor="itemCount">
+          <span className="label-text">個数</span>
+        </label>
+        <input type="number" id="itemCount" placeholder="1" className="input input-bordered" disabled={sending} required />
+
+        <label className="label" htmlFor="priority">
+          <span className="label-text">優先度</span>
+        </label>
+        <div className="rating mb-8">
+          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={1} disabled={sending} />
+          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={2} disabled={sending} />
+          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={3} disabled={sending} defaultChecked />
+          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={4} disabled={sending} />
+          <input type="radio" name="priority" className="mask bg-primary-content mask-star" value={5} disabled={sending} />
+        </div>
+      </form>
+
+      <button className="btn btn-primary" disabled={sending} onClick={() => {
+        (async () => {
+          setSending(true)
+          if (props.circle && user) {
+            const buyData = {
+              uid: user.uid,
+              count: addFormRef.current?.itemCount.value,
+              priority: addFormRef.current?.priority.value,
+            };
+            let addedItem: ItemWithID
+            if (item) {
+              addedItem = await addBuyer(item.id, buyData)
+            } else {
+              addedItem = await addItem({
+                name: newItem.name,
+                price: newItem.price,
+                circleId: props.circle.id,
+                users: [buyData]
+              })
+            }
+            props.onAdd?.(addedItem)
+          }
+          setSending(false)
+        })()
+      }}>追加</button>
+    </Fragment>
+  )
+}

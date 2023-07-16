@@ -1,17 +1,20 @@
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { firestore } from "./firebase";
+import { User } from "firebase/auth";
+import { Circle, CircleWithID, Item, ItemWithID, Userdata } from "./types";
 
 /**
  * サークルをDBに追加
  */
 export async function addCircle(circle: Circle) {
   const id = uuidv4()
-  await setDoc(doc(firestore, "circles", id), {
+  const data = {
     deleted: false,
     ...circle,
-  })
-  return id
+  }
+  await setDoc(doc(firestore, "circles", id), data)
+  return {...data, id}
 }
 
 /** サークル情報を更新 */
@@ -40,13 +43,37 @@ export async function getAllCircles(): Promise<CircleWithID[]> {
 /**
  * 購入物をDBに追加
  */
-export async function addItem(item: Item) {
+export async function addItem(item: Item): Promise<ItemWithID> {
   const id = uuidv4()
-  await setDoc(doc(firestore, "items", id), {
+  const data = {
     deleted: false,
     ...item,
-  })
-  return id
+  }
+  await setDoc(doc(firestore, "items", id), data)
+  return {...data, id}
+}
+
+/**
+ * 購入物に購入者を追加
+ */
+export async function addBuyer(itemId: string, buyData: Item["users"][0]): Promise<ItemWithID> {
+  const itemRef = doc(firestore, "items", itemId)
+  const itemDoc = await getDoc(itemRef)
+  const itemData = itemDoc.data() as Item
+  if (!itemData?.users.find(user => user.uid === buyData.uid)) {
+    itemData?.users.push(buyData)
+  } else {
+    // overwrite
+    itemData.users = itemData.users.map(user => user.uid === buyData.uid ? {
+      ...buyData,
+      count: parseInt(user.count as unknown as string) + parseInt(buyData.count as unknown as string),
+    } : user)
+  }
+  await setDoc(itemRef, itemData)
+  return {
+    ...itemData,
+    id: itemId,
+  }
 }
 
 /**
@@ -67,4 +94,26 @@ export async function getAllItems(): Promise<ItemWithID[]> {
 export async function getItem(id: string) {
   const docRef = await getDoc(doc(firestore, "items", id))
   return docRef.data()
+}
+
+/**
+ * 購入物をDBに追加
+ * @returns UID
+ */
+export async function addUser(user: User) {
+  const userData: Userdata = {
+    name: user.displayName ?? user.uid,
+    photoURL: user.photoURL ?? "",
+  }
+  await setDoc(doc(firestore, "users", user.uid), userData)
+  return user.uid
+}
+
+/**
+ * IDから購入物情報を取得
+ * @param id 購入物ID
+ */
+export async function getUser(id: string) {
+  const docRef = await getDoc(doc(firestore, "users", id))
+  return docRef.data() as Userdata
 }

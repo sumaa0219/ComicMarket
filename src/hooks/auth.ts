@@ -1,15 +1,19 @@
-import { Auth, UserCredential, signInWithCredential, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
-import { useState, useCallback, useEffect, useContext } from "react";
+import { addUser } from "@/lib/db";
+import { Auth, GoogleAuthProvider, User, UserCredential, onAuthStateChanged, signInWithCredential, signInWithPopup, signOut } from "firebase/auth";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
 
 export const useAuth = (auth: Auth) => {
   const [state, setState] = useState<'idel' | 'progress' | 'logined' | 'logouted' | 'error'>('idel')
   const [_user, setUser] = useState<User | null>(null);
+  const router = useRouter()
   const login = useCallback(()=>{
     (async () => {
       setState('progress')
       const result = await signInWithPopup(auth, new GoogleAuthProvider())
       setUser(result.user)
       setState('logined')
+      await addUser(result.user)
     })()
   }, [auth, setUser])
   const logout = useCallback(()=>{
@@ -18,8 +22,9 @@ export const useAuth = (auth: Auth) => {
       await signOut(auth)
       setUser(null)
       setState('logouted')
+      router.push("/")
     })()
-  }, [auth, setUser])
+  }, [auth, router])
 
   useEffect(()=>{
     onAuthStateChanged(auth, user => {
