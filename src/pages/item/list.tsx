@@ -2,6 +2,7 @@ import CircleSelector from "@/components/circleSelector";
 import Layout from "@/components/layout";
 import CircleCard from "@/lib/circleCard";
 import { getAllCircles, getAllItems } from "@/lib/db";
+import { CircleWithID, ItemWithID, CircleCondition } from "@/lib/types";
 import { circleWingToString, isMatchCondition } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Link from "next/link";
@@ -115,9 +116,7 @@ export default function ItemList(props: ItemListProps) {
               <th>サークル名</th>
               <th>購入物名</th>
               <th>単価</th>
-              <th>個数</th>
-              <th>総価格（単価x個数）</th>
-              <th>優先度</th>
+              <th>購入者</th>
             </tr>
           </thead>
           <tbody>
@@ -143,13 +142,7 @@ export default function ItemList(props: ItemListProps) {
                   {item.price}円
                 </td>
                 <td className="">
-                  {item.count}
-                </td>
-                <td className="">
-                  {item.price * item.count}円
-                </td>
-                <td className="">
-                  {item.priority}
+                  {item.users.map((user, i) => (`${user.uid}`))}
                 </td>
               </tr>
             ))}

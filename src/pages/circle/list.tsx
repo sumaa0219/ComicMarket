@@ -1,5 +1,6 @@
 import Layout from "@/components/layout"
 import { getAllCircles } from "@/lib/db"
+import { CircleWithID, CircleCondition } from "@/lib/types"
 import { circleWingToString, isMatchCondition } from "@/lib/utils"
 import { Metadata, NextPageContext } from "next"
 import Link from "next/link"

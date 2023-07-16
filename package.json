@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "lint": "next build",
     "start": "next start",
-    "build": "run-s dotenv:pull next:build",
-    "next:build": "next build",
-    "dotenv:pull": "npx dotenv-vault@latest pull"
+    "build": "next build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
@@ -33,5 +32,8 @@
     "typescript": "5.1.6",
     "uuid": "^9.0.0"
   },
-  "packageManager": "yarn@3.6.1"
+  "packageManager": "yarn@3.6.1",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
 }

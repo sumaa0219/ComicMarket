@@ -1,5 +1,6 @@
 import Layout from "@/components/layout";
 import { getCircle, getItem } from "@/lib/db";
+import { CircleWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
 
