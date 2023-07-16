@@ -1,8 +1,8 @@
 import CircleSelector from "@/components/circleSelector";
 import Layout from "@/components/layout";
 import CircleCard from "@/lib/circleCard";
-import { getAllCircles, getAllItems, getAllUsers, getUser } from "@/lib/db";
-import { CircleCondition, CircleWithID, ItemWithID, Userdata, UserdataWithID } from "@/lib/types";
+import { getAllCircles, getAllItems, getAllUsers } from "@/lib/db";
+import { CircleCondition, CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString, isMatchCondition } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Link from "next/link";

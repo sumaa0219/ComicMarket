@@ -11,6 +11,8 @@ export interface Circle {
   /** 場所 */
   place: string;
 
+  /** お品書き画像 */
+  menuImagePath?: string;
   /** DB用 : 削除済み */
   deleted?: boolean;
 }

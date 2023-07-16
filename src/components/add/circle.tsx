@@ -1,4 +1,4 @@
-import { addCircle } from "@/lib/db";
+import { addCircle, updateCircle, uploadImage } from "@/lib/db";
 import { Circle, CircleWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { Fragment, useRef, useState } from "react";
@@ -13,6 +13,8 @@ export default function AddCircle(props: AddCircleProps) {
   const [circle, setCircle] = useState<CircleWithID | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const [warn, setWarn] = useState<string>("")
+
+  const [sending, setSending] = useState(false)
   
   async function showWarn(msg: string) {
     setWarn(msg)
@@ -71,6 +73,11 @@ export default function AddCircle(props: AddCircleProps) {
                 <span className="label-text">出店場所</span>
               </label>
               <input type="text" id="circlePlace" placeholder="ま42b" className="input input-bordered w-full" required disabled={!!circle} />
+
+              <label className="label" htmlFor="circleImage">
+                <span className="label-text">お品書き</span>
+              </label>
+              <input type="file" name="circleImage" className="file-input file-input-bordered w-full" />
             </div>
           </Fragment>
         </form>
@@ -79,7 +86,9 @@ export default function AddCircle(props: AddCircleProps) {
     <button
       type="submit"
       className="btn btn-primary mt-8"
+      disabled={sending}
       onClick={(e) => {
+        setSending(true)
         if (circle) {
           props.onSelect?.(circle)
         } else {
@@ -90,6 +99,7 @@ export default function AddCircle(props: AddCircleProps) {
               day: formRef.current.circleDay.value,
               wing: formRef.current.circleWing.value,
             };
+            const file = formRef.current.circleImage.files?.[0]
 
             // 重複するサークルがないか確認
             const duplicateCheck = {
@@ -103,11 +113,21 @@ export default function AddCircle(props: AddCircleProps) {
             } else {
               (async ()=>{
                 const data = await addCircle(formData)
+
+                if (file) {
+                  const fullPath = await uploadImage(file, data.id)
+                  await updateCircle({
+                    ...data,
+                    menuImagePath: fullPath,
+                  })
+                }
+
                 props.onSelect?.(data)
               })()
             }
           }
         }
+        setSending(false)
       }}
     >次へ</button>
     {warn  && <div className="ml-4 mt-12 text-red-400">

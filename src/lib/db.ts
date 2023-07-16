@@ -1,8 +1,9 @@
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
-import { firestore } from "./firebase";
+import { firestore, storage } from "./firebase";
 import { User } from "firebase/auth";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID } from "./types";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 /**
  * サークルをDBに追加
@@ -26,7 +27,10 @@ export const updateCircle = addCircle
  */
 export async function getCircle(id: string) {
   const docRef = await getDoc(doc(firestore, "circles", id))
-  return docRef.data()
+  return {
+    ...docRef.data(),
+    id: docRef.id,
+  } as CircleWithID
 }
 
 /**
@@ -130,4 +134,22 @@ export async function getAllUsers(): Promise<UserdataWithID[]> {
     id: doc.id,
   }))
   return data
+}
+
+/**
+ * 画像をfirebase storageにアップロード
+ * @returns fullPath
+ */
+export async function uploadImage(file: File, circleId: string): Promise<string> {
+  const imageRef = ref(storage, `/${circleId}/${file.name}`);
+  const snapshot = await uploadBytes(imageRef, file)
+  return snapshot.ref.fullPath
+}
+
+/**
+ * ダウンロードURLを取得
+ */
+export async function getURL(path: string): Promise<string> {
+  const url = await getDownloadURL(ref(storage, path))
+  return url
 }
