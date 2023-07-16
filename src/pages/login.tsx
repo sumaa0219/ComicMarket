@@ -7,6 +7,7 @@ import { useEffect } from "react";
 export default function Login() {
   const router = useRouter()
   const { state, login } = useAuth(auth)
+
   useEffect(() => {
     if (state === "logined") {
       router.push("/")

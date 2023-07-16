@@ -27,7 +27,7 @@ export default function Auth() {
             </div>
           </button>
         </Link>
-        <button className="btn btn-square ml-2" onClick={() => logout()}>
+        <button className="btn btn-square ml-2" onClick={() => logout()} title="ログイン">
           <FontAwesomeIcon icon={faRightFromBracket} className="text-2xl" />
         </button>
       </div>

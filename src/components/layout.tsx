@@ -1,11 +1,10 @@
-import Link from "next/link";
-import { Dispatch, HTMLAttributes, SetStateAction, createContext, useEffect, useState } from "react";
-import HumbergerIcon from "./HumbergerIcon";
-import Auth from "./auth";
-import { User } from "firebase/auth";
-import { useRouter } from "next/router";
 import { useAuth } from "@/hooks/auth";
 import { auth } from "@/lib/firebase";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { HTMLAttributes, useEffect } from "react";
+import HumbergerIcon from "./HumbergerIcon";
+import Auth from "./auth";
 
 interface LayoutProps extends HTMLAttributes<HTMLDivElement> {
   /** ページタイトル */
@@ -53,7 +52,7 @@ export default function Layout(props: LayoutProps) {
       <div className="drawer-content">
         <div className="navbar bg-base-100 px-4 shadow-lg sticky top-0">
           <div className="flex-none mr-4">
-            <label htmlFor="page-drawer" className="btn btn-square btn-ghost drawer-button">
+            <label htmlFor="page-drawer" className="btn btn-square btn-ghost drawer-button" title="メニューを開く">
               <HumbergerIcon />
             </label>
           </div>

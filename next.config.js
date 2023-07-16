@@ -5,6 +5,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   openAnalyzer: false
 })
 const { withSentryConfig } = require("@sentry/nextjs");
+const withPWA = require("next-pwa")({
+  dest: 'public',
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development'
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -55,10 +60,13 @@ const sentryWebpackPluginOptions = {
   // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
 
-
 module.exports = withSentryConfig({
-  ...withBundleAnalyzer(nextConfig),
+  ...withBundleAnalyzer(withPWA(nextConfig)),
   sentry: {
     hideSourceMaps: true,
+    widenClientFileUpload: true,
+    disableLogger: true,
+    tunnelRoute: "/monitoring"
   }
-}, sentryWebpackPluginOptions)
+}, sentryWebpackPluginOptions
+)
