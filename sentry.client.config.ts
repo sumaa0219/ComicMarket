@@ -10,7 +10,10 @@ Sentry.init({
   dsn: "https://12c0792a7a334bfdbafda42acc68f722@o174081.ingest.sentry.io/4505537713340416",
   integrations: [
     new Sentry.BrowserTracing(),
-    new Sentry.Replay(),
+    new Sentry.Replay({
+      maskAllText: false,
+      maskAllInputs: false,
+    }),
     new CaptureConsole(),
     new ReportingObserver(),
     new ExtraErrorData(),

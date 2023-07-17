@@ -6,14 +6,21 @@ import { useCallback, useEffect, useState } from "react";
 export const useAuth = (auth: Auth) => {
   const [state, setState] = useState<'idel' | 'progress' | 'logined' | 'logouted' | 'error'>('idel')
   const [_user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<unknown>('');
   const router = useRouter()
   const login = useCallback(()=>{
     (async () => {
       setState('progress')
-      const result = await signInWithPopup(auth, new GoogleAuthProvider())
-      setUser(result.user)
-      setState('logined')
-      await addUser(result.user)
+      try {
+        const result = await signInWithPopup(auth, new GoogleAuthProvider())
+        setError('')
+        setUser(result.user)
+        setState('logined')
+        await addUser(result.user)
+      } catch (e) {
+        setError(e)
+        setState('error')
+      }
     })()
   }, [auth, setUser])
   const logout = useCallback(()=>{
@@ -36,7 +43,7 @@ export const useAuth = (auth: Auth) => {
       }
     })
   }, [auth, setUser])
-  return { state, user: _user, login, logout }
+  return { state, user: _user, login, logout, error }
 }
 
 export const useAuth_ = (auth: Auth) => {
