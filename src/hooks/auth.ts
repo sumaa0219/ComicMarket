@@ -2,6 +2,7 @@ import { addUser } from "@/lib/db";
 import { Auth, GoogleAuthProvider, User, UserCredential, onAuthStateChanged, signInWithCredential, signInWithPopup, signOut } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import * as Sentry from '@sentry/nextjs';
 
 export const useAuth = (auth: Auth) => {
   const [state, setState] = useState<'idel' | 'progress' | 'logined' | 'logouted' | 'error'>('idel')
@@ -17,6 +18,11 @@ export const useAuth = (auth: Auth) => {
         setUser(result.user)
         setState('logined')
         await addUser(result.user)
+        Sentry.setUser({
+          email: result.user.email ?? undefined,
+          id: result.user.uid,
+          username: result.user.displayName ?? undefined,
+        })
       } catch (e) {
         setError(e)
         setState('error')
@@ -29,6 +35,7 @@ export const useAuth = (auth: Auth) => {
       await signOut(auth)
       setUser(null)
       setState('logouted')
+      Sentry.setUser(null);
       router.push("/")
     })()
   }, [auth, router])
