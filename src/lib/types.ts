@@ -1,5 +1,7 @@
 import type { User } from "firebase/auth";
 
+type WithId<I> = I & { id: string }
+
 /** サークル */
 export interface Circle {
   /** サークル名 */
@@ -21,7 +23,7 @@ export interface CircleWithID extends Circle {
   id: string
 }
 
-/** 購入物 */
+/** 商品 */
 export interface Item {
   /** サークルID */
   circleId: string;
@@ -49,6 +51,21 @@ export interface ItemWithID extends Item {
   id: string
 }
 
+interface Buy {
+  /** サークルID */
+  circleId: string;
+  /** 商品ID */
+  itemId: string;
+  /** 購入者のUID */
+  uid: string;
+  /** 個数 */
+  count: number;
+  /** 優先度 */
+  priority: number;
+  /** コメント */
+  comment: string;
+}
+
 /** サークル検索条件 */
 export interface CircleCondition {
   name: string;
@@ -66,7 +83,7 @@ export interface CircleCondition {
 
 export interface Userdata {
   name: string;
-  photoURL: User["photoURL"];
+  photoURL: NonNullable<User["photoURL"]>;
 }
 
 export interface UserdataWithID extends Userdata {

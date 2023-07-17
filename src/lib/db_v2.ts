@@ -3,25 +3,12 @@ import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { firestore, storage } from "./firebase";
-// import { firestore as adminFirestore, storage as adminStorage } from "./firebase_admin";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID } from "./types";
-
-// function isServer() {
-//   const res = typeof window === "undefined"
-//   console.log(`isServer: ${res}`)
-//   return typeof window === "undefined"
-// }
-
-// async function getSnapshot(collectionPath: string) {
-//   return isServer()
-//     ? await adminFirestore.collection(collectionPath).get()
-//     : await getDocs(collection(normalFirestore, collectionPath))
-// }
 
 /**
  * サークルをDBに追加
  */
-export async function addCircle(circle: Circle, admin = false) {
+export async function addCircle(circle: Circle) {
   const id = uuidv4()
   const data = {
     deleted: false,
@@ -114,30 +101,16 @@ export async function getItem(id: string) {
 }
 
 /**
- * ユーザーを追加
+ * 購入物をDBに追加
  * @returns UID
  */
-export async function addUser(user: User, overwrite = false) {
+export async function addUser(user: User) {
   const userData: Userdata = {
     name: user.displayName ?? user.uid,
     photoURL: user.photoURL ?? "",
   }
-  if (!overwrite) {
-    const docRef = await getDoc(doc(firestore, "users", user.uid))
-    if (docRef.exists()) {
-      return user.uid
-    }
-  }
   await setDoc(doc(firestore, "users", user.uid), userData)
   return user.uid
-}
-
-export async function updateUserName(id: string, name: string) {
-  const docRef = await getDoc(doc(firestore, "users", id))
-  const data = docRef.data() as Userdata
-  data.name = name
-  await setDoc(doc(firestore, "users", id), data)
-  return data
 }
 
 /**

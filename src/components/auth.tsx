@@ -32,6 +32,11 @@ export default function Auth() {
             </Link>
           </li>
           <li>
+            <Link href={`/settings`}>
+              設定
+            </Link>
+          </li>
+          <li>
             <button onClick={() => logout()}>
               ログアウト
             </button>

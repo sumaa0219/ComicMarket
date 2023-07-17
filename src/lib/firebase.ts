@@ -1,9 +1,9 @@
-import { getApps, initializeApp } from "firebase/app";
+import { FirebaseOptions, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage, ref } from "firebase/storage";
 
-const firebaseConfig = {
+export const firebaseConfig: FirebaseOptions = {
     apiKey: "AIzaSyBSs5JZCLyQKUVH_mtng2xln4E3NwmhyFw",
     authDomain: "comicmarket-fd197.firebaseapp.com",
     databaseURL: "https://comicmarket-fd197-default-rtdb.firebaseio.com",
