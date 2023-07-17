@@ -9,6 +9,11 @@ import Auth from "./auth";
 interface LayoutProps extends HTMLAttributes<HTMLDivElement> {
   /** ページタイトル */
   title?: string;
+  /**
+   * 中央寄せにするかどうか
+   * @default false
+   */
+  center?: boolean;
 }
 interface MenuItem {
   /** メニュー名 */
@@ -21,7 +26,8 @@ const loginNotNeededPaths: RegExp[] = [
   /^\/login\/?.*$/,
 ]
 
-export default function Layout(props: LayoutProps) {
+export default function Layout({ center = false, ...props }: LayoutProps) {
+  console.log({center})
   const menuItems: MenuItem[] = [
     {
       title: "サークル一覧",
@@ -75,12 +81,14 @@ export default function Layout(props: LayoutProps) {
             <Auth />
           </div>
         </div>
-        <div className="p-4 block">
+        <div className={`p-4 flex ${center && "justify-center"}`}>
+          <div className="block w-full h-full">
           {(state === "logouted" || !loginNotNeededPaths.some(path => path.test(router.pathname)))
             ? props.children
             : <div>
-              Waiting for user data ... 
+              Waiting for user data ...
             </div>}
+          </div>
         </div>
       </div>
       <div className="drawer-side mt-16">

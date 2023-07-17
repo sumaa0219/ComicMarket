@@ -3,8 +3,43 @@ import { Auth, GoogleAuthProvider, User, UserCredential, onAuthStateChanged, sig
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import * as Sentry from '@sentry/nextjs';
+import { auth as _auth } from "@/lib/firebase";
 
-export const useAuth = (auth: Auth) => {
+export const useLogin = (auth: Auth = _auth) => {
+  const [state, setState] = useState<'idel' | 'progress' | 'logined' | 'logouted' | 'error'>('idel')
+  const [error, setError] = useState<unknown>('');
+  const login = useCallback(()=>{
+    (async ()=>{
+      try {
+        setState('progress')
+        await signInWithPopup(auth, new GoogleAuthProvider())
+        setState('logined')
+      } catch (e) {
+        setState('error')
+        setError(e)
+      }
+    })()
+  }, [auth])
+  return { state, login, error }
+}
+
+export const useUser = (auth: Auth = _auth) => {
+  const [state, setState] = useState<'idel' | 'progress' | 'logined' | 'logouted' | 'error'>('idel')
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    onAuthStateChanged(auth, u => {
+      setUser(u)
+      if (u) {
+        setState('logined')
+      } else {
+        setState('logouted')
+      }
+    })
+  }, [auth, setUser])
+  return { state, user }
+}
+
+export const useAuth = (auth: Auth = _auth) => {
   const [state, setState] = useState<'idel' | 'progress' | 'logined' | 'logouted' | 'error'>('idel')
   const [_user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<unknown>('');

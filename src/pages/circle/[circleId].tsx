@@ -1,8 +1,7 @@
 import Layout from "@/components/layout";
-import { getAllItems, getAllUsers, getCircle, getItem, getURL } from "@/lib/db";
+import { getAllItems, getAllUsers, getCircle, getURL } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
-import { getDownloadURL } from "firebase/storage";
 import { NextPageContext } from "next";
 import Image from "next/image";
 import Link from "next/link";

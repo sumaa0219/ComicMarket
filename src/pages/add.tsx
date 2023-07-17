@@ -25,47 +25,45 @@ export default function Add(props: AddProps) {
   const [circle, setCircle] = useState<CircleWithID | null>(null)
   const [item, setItem] = useState<ItemWithID | null>(null)
   const { user } = useAuth(auth)
-  return (<Layout title="購入物追加">
-    <div className="w-full h-full mt-4 mb-20 p-4">
-      <div className="flex flex-col w-1/3 border rounded-lg border-gray-500 p-12 mx-auto">
-        {
-          [
-            null,
-            <AddCircle circles={props.circles} onSelect={c => {
-              setCircle(c)
+  return (<Layout title="購入物追加" center>
+    <div className="flex flex-col lg:w-full xl:w-1/3 lg:border lg:rounded-lg lg:border-gray-500 p-12 mx-auto">
+      {
+        [
+          null,
+          <AddCircle circles={props.circles} onSelect={c => {
+            setCircle(c)
+            setStep(s => s + 1)
+          }} key={null} />,
+          <AddItem
+            items={props.items}
+            circle={circle}
+            key={null}
+            onAdd={item => {
+              setItem(item)
               setStep(s => s + 1)
-            }} key={null} />,
-            <AddItem
-              items={props.items}
-              circle={circle}
-              key={null}
-              onAdd={item => {
-                setItem(item)
-                setStep(s => s + 1)
-              }}
-            />,
-            <div key={undefined} className="flex flex-col">
-              <div>
-                以下の購入物が追加されました
-              </div>
-              <div className="flex justify-center text-xl">
-                {item?.name}
-              </div>
-              <div className="flex justify-center">
-                {item?.price}円
-              </div>
-              <div className="flex justify-center">
-                { item?.users.find(u => u.uid === user?.uid )?.count }個
-              </div>
-              <Link href={`/item/${item?.id}`}>
-                <button className="btn w-full mt-4">購入物の詳細</button>
-              </Link>
-              <button className="btn w-full mt-4" onClick={() => setStep(2)}>同じサークルで登録を続ける</button>
-              <button className="btn w-full mt-4" onClick={() => setStep(1)}>別のサークルで登録を続ける</button>
+            }}
+          />,
+          <div key={undefined} className="flex flex-col">
+            <div>
+              以下の購入物が追加されました
             </div>
-          ][step]
-        }
-      </div>
+            <div className="flex justify-center text-xl">
+              {item?.name}
+            </div>
+            <div className="flex justify-center">
+              {item?.price}円
+            </div>
+            <div className="flex justify-center">
+              {item?.users.find(u => u.uid === user?.uid)?.count}個
+            </div>
+            <Link href={`/item/${item?.id}`}>
+              <button className="btn w-full mt-4">購入物の詳細</button>
+            </Link>
+            <button className="btn w-full mt-4" onClick={() => setStep(2)}>同じサークルで登録を続ける</button>
+            <button className="btn w-full mt-4" onClick={() => setStep(1)}>別のサークルで登録を続ける</button>
+          </div>
+        ][step]
+      }
     </div>
   </Layout>)
 }
