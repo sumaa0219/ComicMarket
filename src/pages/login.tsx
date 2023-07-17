@@ -7,11 +7,13 @@ import { useEffect, useRef } from "react";
 export default function Login() {
   const router = useRouter()
   const { state, login, error } = useAuth(auth)
-  const dialogRef = useRef<HTMLDialogElement|null>(null)
+  const dialogRef = useRef<HTMLDialogElement | null>(null)
 
   useEffect(() => {
     if (state === "logined") {
-      router.push("/")
+      router.query.return
+        ? router.push(decodeURIComponent(router.query.return.toString()))
+        : router.push("/")
     } else if (state === "error") {
       console.error(error)
       dialogRef.current?.showModal()
@@ -21,7 +23,7 @@ export default function Login() {
   return (
     <Layout>
       <div className="w-full min-h-full h-full flex justify-center items-center">
-        <button className="btn btn-primary" onClick={login}>Sign in</button>
+        <button className="btn btn-primary" onClick={login} disabled={state === "progress"}>Sign in</button>
       </div>
       <dialog id="errorModal" className="modal" ref={dialogRef}>
         <form method="dialog" className="modal-box">

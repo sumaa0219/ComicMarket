@@ -26,7 +26,7 @@ export default function Add(props: AddProps) {
   const [item, setItem] = useState<ItemWithID | null>(null)
   const { user } = useAuth(auth)
   return (<Layout title="購入物追加" center>
-    <div className="flex flex-col lg:w-full xl:w-1/3 lg:border lg:rounded-lg lg:border-gray-500 p-12 mx-auto">
+    <div className="flex flex-col border rounded-lg border-gray-500 xl:w-1/3 p-12 mx-auto">
       {
         [
           null,

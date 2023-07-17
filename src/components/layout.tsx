@@ -27,7 +27,6 @@ const loginNotNeededPaths: RegExp[] = [
 ]
 
 export default function Layout({ center = false, ...props }: LayoutProps) {
-  console.log({center})
   const menuItems: MenuItem[] = [
     {
       title: "サークル一覧",
@@ -48,7 +47,7 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
 
   useEffect(() => {
     if (state === "logouted" && !loginNotNeededPaths.some(path => path.test(router.pathname))) {
-      router.push("/login")
+      router.push(`/login?return=${encodeURIComponent(router.asPath)}`)
     }
   }, [login, router, state])
 
@@ -62,19 +61,9 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
               <HumbergerIcon />
             </label>
           </div>
-          <div className="flex-[2] min-w-96">
-            <Link href="/" className="text-xl">
+          <div className="flex-1 min-w-96">
+            <Link href="/" className="text-xl truncate">
               {props.title ?? "C102委託管理"}
-            </Link>
-          </div>
-          <div className="flex-[1]">
-            <Link href="/add" className="btn">
-              購入物追加
-            </Link>
-          </div>
-          <div className="flex-[8]">
-            <Link href="/item/list" className="btn">
-              購入物一覧
             </Link>
           </div>
           <div className="flex-none">

@@ -11,25 +11,32 @@ export default function Auth() {
   return (<Fragment>
     {state === "logined"
       ?
-      <div className="flex flex-row">
-        <Link href={`/user/${user?.uid}`} passHref>
-          <button className="btn btn-square">
-            <div className="avatar">
-              <div className="w-12 rounded-full">
-                {(user && user.photoURL) &&
-                  <Image
-                    alt={user.displayName ?? "User"}
-                    src={user.photoURL}
-                    width={200}
-                    height={200}
-                  />}
-              </div>
+      <div className="dropdown">
+        <label tabIndex={0} className="btn btn-square">
+          <div className="avatar">
+            <div className="w-12 rounded-full">
+              {(user && user.photoURL) &&
+                <Image
+                  alt={user.displayName ?? "User"}
+                  src={user.photoURL}
+                  width={200}
+                  height={200}
+                />}
             </div>
-          </button>
-        </Link>
-        <button className="btn btn-square ml-2" onClick={() => logout()} title="ログイン">
-          <FontAwesomeIcon icon={faRightFromBracket} className="text-2xl" />
-        </button>
+          </div>
+        </label>
+        <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-xl bg-base-100 rounded-box right-0">
+          <li>
+            <Link href={`/user/${user?.uid}`}>
+              マイページ
+            </Link>
+          </li>
+          <li>
+            <button onClick={() => logout()}>
+              ログアウト
+            </button>
+          </li>
+        </ul>
       </div>
       : state === "logouted" || state === "progress"
         ? <button className="btn btn-square" onClick={() => login()} disabled={state === "progress"}>
