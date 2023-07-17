@@ -3,7 +3,7 @@ name: Build Next.js site
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["master"]
+    branches: ["main"]
 
   workflow_dispatch:
 
