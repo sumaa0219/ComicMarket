@@ -13,7 +13,7 @@ import { firestore, storage } from "./firebase";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID } from "./types";
 
 function isDev() {
-  // return false
+  return false
   return process.env.NODE_ENV === "development"
 }
 
@@ -72,7 +72,11 @@ export async function getAllCircles(): Promise<CircleWithID[]> {
 }
 
 export async function removeCircle(id: string) {
-  await setDoc(doc(firestore, "circles", id), {deleted: true})
+  const circle = await getCircle(id)
+  await setDoc(doc(firestore, "circles", id), {
+    ...circle,
+    deleted: true,
+  })
 }
 
 /**

@@ -1,27 +1,42 @@
 import type { User } from "firebase/auth";
+import { z } from "zod";
 
 type WithId<I> = I & { id: string }
 
+export const circle = z.object({
+  name: z.string().describe("サークル名"),
+  day: z.union([z.literal("1"), z.literal("2")]),
+  wing: z.union([z.literal("west"), z.literal("east"), z.literal("south")]),
+  place: z.string(),
+
+  menuImagePath: z.string().optional(),
+  deleted: z.boolean().optional(),
+})
 /** サークル */
-export interface Circle {
-  /** サークル名 */
-  name: string;
-  /** サークル出店日 */
-  day: "1" | "2";
-  /** 西とか東とか */
-  wing: "west" | "east" | "south";
-  /** 場所 */
-  place: string;
+export type Circle = z.infer<typeof circle>
+// export interface Circle {
+//   /** サークル名 */
+//   name: string;
+//   /** サークル出店日 */
+//   day: "1" | "2";
+//   /** 西とか東とか */
+//   wing: "west" | "east" | "south";
+//   /** 場所 */
+//   place: string;
 
-  /** お品書き画像 */
-  menuImagePath?: string;
-  /** DB用 : 削除済み */
-  deleted?: boolean;
-}
+//   /** お品書き画像 */
+//   menuImagePath?: string;
+//   /** DB用 : 削除済み */
+//   deleted?: boolean;
+// }
 
-export interface CircleWithID extends Circle {
-  id: string
-}
+export const circleWithID = circle.extend({
+  id: z.string(),
+})
+export type CircleWithID = z.infer<typeof circleWithID>
+// export interface CircleWithID extends Circle {
+//   id: string
+// }
 
 /** 商品 */
 export interface Item {
@@ -66,20 +81,35 @@ interface Buy {
   comment: string;
 }
 
+export const circleCondition = z.object({
+  name: z.string(),
+  place: z.string(),
+  days: z.object({
+    "1": z.boolean(),
+    "2": z.boolean(),
+  }),
+  wings: z.object({
+    west: z.boolean(),
+    east: z.boolean(),
+    south: z.boolean(),
+  })
+})
+
 /** サークル検索条件 */
-export interface CircleCondition {
-  name: string;
-  place: string;
-  days: {
-    "1": boolean;
-    "2": boolean;
-  };
-  wings: {
-    west: boolean;
-    east: boolean;
-    south: boolean;
-  };
-}
+// export interface CircleCondition {
+//   name: string;
+//   place: string;
+//   days: {
+//     "1": boolean;
+//     "2": boolean;
+//   };
+//   wings: {
+//     west: boolean;
+//     east: boolean;
+//     south: boolean;
+//   };
+// }
+export type CircleCondition = z.infer<typeof circleCondition>
 
 export interface Userdata {
   name: string;

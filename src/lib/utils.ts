@@ -1,19 +1,25 @@
-import { CircleCondition, CircleWithID } from "./types"
+import { CircleCondition, CircleWithID, circleCondition, circleWithID } from "./types"
 
-export function isMatchCondition(condition: CircleCondition, data: CircleWithID): boolean {
+export function isMatchCondition(conditionArg: CircleCondition, circleArg: CircleWithID): boolean {
+  const condition = circleCondition.parse(conditionArg)
+  const circleParse = circleWithID.safeParse(circleArg)
+  if (!circleParse.success) {
+    console.error(circleParse.error, circleArg)
+    return false
+  }
+  const { data: circle } = circleParse
   return (
-    Object.keys(condition).length >= 4 &&
     (
-      condition.name.length === 0 || data.name.includes(condition.name)
+      condition.name.length !== 0 && circle.name.includes(condition.name)
     ) &&
     (
-      condition.days[data.day]
+      condition.days[circle.day]
     ) &&
     (
-      condition.wings[data.wing]
+      condition.wings[circle.wing]
     ) &&
     (
-      condition.place.length === 0 || data.place.includes(condition.place)
+      condition.place.length !== 0 && circle.place.includes(condition.place)
     )
   )
 }
