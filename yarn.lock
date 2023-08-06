@@ -4122,6 +4122,7 @@ __metadata:
     "@sentry/integrations": ^7.58.1
     "@sentry/nextjs": ^7.58.1
     "@sentry/profiling-node": ^1.1.2
+    "@sentry/webpack-plugin": 1.20.0
     "@types/node": 20.4.2
     "@types/react": 18.2.15
     "@types/react-dom": 18.2.7

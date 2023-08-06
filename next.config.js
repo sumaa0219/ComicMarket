@@ -10,9 +10,11 @@ const withPWA = require("next-pwa")({
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development'
 });
+const sentryWebpackPlugin = require("@sentry/webpack-plugin");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
   images: {
     remotePatterns: [
       {
@@ -29,6 +31,28 @@ const nextConfig = {
       },
     ],
   },
+  webpack(
+    /**
+     * @type {import('webpack').Configuration}
+     */
+    config,
+    { isServer }
+  ) {
+    if (config.plugins instanceof Array) {
+      config.plugins.push(
+        new sentryWebpackPlugin({
+          org: process.env.SENTRY_ORG,
+          project: process.env.SENTRY_PROJECT,
+
+          // Auth tokens can be obtained from https://sentry.io/settings/account/api/auth-tokens/
+          // and need `project:releases` and `org:read` scopes
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+          include: '.next',
+        }),
+      )
+    }
+    return config
+  }
 }
 
 const sentryWebpackPluginOptions = {
@@ -61,6 +85,6 @@ module.exports = passSentry({
     hideSourceMaps: true,
     widenClientFileUpload: true,
     disableLogger: true,
-    tunnelRoute: "/monitoring"
+    tunnelRoute: "/monitoring",
   }
 }, sentryWebpackPluginOptions)
