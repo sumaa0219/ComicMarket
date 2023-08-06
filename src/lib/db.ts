@@ -13,7 +13,7 @@ import { firestore, storage } from "./firebase";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID } from "./types";
 
 function isDev() {
-  return false
+  // return false
   return process.env.NODE_ENV === "development"
 }
 
