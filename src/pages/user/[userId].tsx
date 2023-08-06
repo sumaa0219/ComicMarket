@@ -5,6 +5,7 @@ import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 interface ItemProps {
   circles: CircleWithID[];
@@ -23,6 +24,22 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 }
 
 export default function Circle(props: ItemProps) {
+  let totalPrice = 0
+  console.log(props.items)
+  if (props.items.length === 0) {
+    totalPrice = 0
+  }
+  else {
+    let price = 0
+    props.items.map((item, i) => item.users.map((user, j) => (
+      price += Number(item.price) * Number(user.count)
+    )))
+    totalPrice = price
+  }
+
+
+
+
   return (<Layout title="ユーザー詳細">
     <div className="flex flex-row">
       <div className="avatar">
@@ -34,6 +51,10 @@ export default function Circle(props: ItemProps) {
       <div className="flex flex-col min-h-full">
         <div className="text-2xl my-auto ml-4">{props.user.name}</div>
       </div>
+    </div>
+
+    <div className="mt-12">
+      合計金額:{totalPrice}円
     </div>
 
 
