@@ -61,6 +61,20 @@ export default function AddItem(props: AddItemProps) {
           </form>
         </Fragment>
       }
+
+      {
+        // 以前に登録していれば警告を表示
+        item && item.users.find(u => u.uid === user?.uid) && (
+          <Fragment>
+            <div className="divider"></div>
+            <div className="alert alert-warning">
+              以前にこの購入物を登録しています : {item.users.find(u => u.uid === user?.uid)?.count}個<br/>
+              このまま登録を続ければ、以前の登録は上書きされます。
+            </div>
+          </Fragment>
+        )
+      }
+
       <div className="divider"></div>
       <form className="form-control" onSubmit={e => e.preventDefault()} ref={addFormRef} onChange={() => {
         const buyData = {

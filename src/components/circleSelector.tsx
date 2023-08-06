@@ -142,7 +142,7 @@ export function CircleSelectorComponent(props: CircleSelectorComponentProps) {
           <div className="w-1/5 flex justify-center">出店場所</div>
         </li>
 
-        {circles.length > 0 ? circles.map((c, i) => (
+        {circles.length > 0 ? circles.filter(c => !c.deleted).map((c, i) => (
           <li
             className="flex flex-row mt-2 rounded-lg hover:bg-neutral-focus active:bg-neutral transition-[background-color] p-2 cursor-pointer select-none"
             onPointerDown={() => {

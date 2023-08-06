@@ -97,9 +97,21 @@ export async function addBuyer(itemId: string, buyData: Item["users"][0]): Promi
     // overwrite
     itemData.users = itemData.users.map(user => user.uid === buyData.uid ? {
       ...buyData,
-      count: parseInt(user.count as unknown as string) + parseInt(buyData.count as unknown as string),
+      // count: parseInt(user.count as unknown as string) + parseInt(buyData.count as unknown as string),
     } : user)
   }
+  await setDoc(itemRef, itemData)
+  return {
+    ...itemData,
+    id: itemId,
+  }
+}
+
+export async function removeBuyer(itemId: string, uid: string) {
+  const itemRef = doc(firestore, "items", itemId)
+  const itemDoc = await getDoc(itemRef)
+  const itemData = itemDoc.data() as Item
+  itemData.users = itemData.users.filter(user => user.uid !== uid)
   await setDoc(itemRef, itemData)
   return {
     ...itemData,
@@ -124,7 +136,10 @@ export async function getAllItems(): Promise<ItemWithID[]> {
  */
 export async function getItem(id: string) {
   const docRef = await getDoc(doc(firestore, "items", id))
-  return docRef.data()
+  return {
+    ...docRef.data(),
+    id: docRef.id,
+  }
 }
 
 /**
