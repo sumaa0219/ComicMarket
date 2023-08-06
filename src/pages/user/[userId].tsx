@@ -25,7 +25,6 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 
 export default function Circle(props: ItemProps) {
   let totalPrice = 0
-  console.log(props.items)
   if (props.items.length === 0) {
     totalPrice = 0
   }
