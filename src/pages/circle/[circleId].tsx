@@ -1,10 +1,12 @@
 import Layout from "@/components/layout";
-import { getAllItems, getAllUsers, getCircle, getURL } from "@/lib/db";
+import { getAllItems, getAllUsers, getCircle, getURL, removeCircle } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
 
 interface ItemProps {
   circle: CircleWithID;
@@ -27,6 +29,7 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 }
 
 export default function Circle(props: ItemProps) {
+  const router = useRouter()
   return (<Layout title="サークル詳細">
     <div className="text-2xl">{props.circle.name}</div>
     <div className="text-xl">{props.circle.day}日目</div>
@@ -38,6 +41,12 @@ export default function Circle(props: ItemProps) {
         <Image src={props.menuImageURL} width={500} height={500} alt={""} className="m-8 ml-20" />
       </Link>
     }
+
+    <button className="btn btn-primary" onClick={e=>{
+      e.preventDefault()
+      removeCircle(props.circle.id)
+      router.push(`/circle/list`)
+    }}>サークル削除</button>
 
     <div className="overflow-x-auto">
       <table className="table">

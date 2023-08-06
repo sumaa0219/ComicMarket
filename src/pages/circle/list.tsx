@@ -100,7 +100,7 @@ export default function ListCircle(props: ListCircleProps) {
             </tr>
           </thead>
           <tbody>
-            {circles.map((c, i) => (
+            {circles.filter(c => !c.deleted).map((c, i) => (
               <tr className="" key={i}>
                 <td className="">
                   <Link href={`/circle/${c.id}`} className="w-full">

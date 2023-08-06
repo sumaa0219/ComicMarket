@@ -51,7 +51,11 @@ const sentryWebpackPluginOptions = {
   // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
 
-module.exports = withSentryConfig({
+function passSentry(config, options) {
+  return process.env.NODE_ENV === "production" ? withSentryConfig(config, options) : config
+}
+
+module.exports = passSentry({
   ...withBundleAnalyzer(withPWA(nextConfig)),
   sentry: {
     hideSourceMaps: true,

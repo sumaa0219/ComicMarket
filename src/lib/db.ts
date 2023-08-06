@@ -1,22 +1,32 @@
 import { User } from "firebase/auth";
-import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import {
+  Firestore,
+  collection as _collection,
+  doc as _doc,
+  getDoc,
+  getDocs,
+  setDoc
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { firestore, storage } from "./firebase";
-// import { firestore as adminFirestore, storage as adminStorage } from "./firebase_admin";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID } from "./types";
 
-// function isServer() {
-//   const res = typeof window === "undefined"
-//   console.log(`isServer: ${res}`)
-//   return typeof window === "undefined"
-// }
+function isDev() {
+  return process.env.NODE_ENV === "development"
+}
 
-// async function getSnapshot(collectionPath: string) {
-//   return isServer()
-//     ? await adminFirestore.collection(collectionPath).get()
-//     : await getDocs(collection(normalFirestore, collectionPath))
-// }
+function doc(firestore: Firestore, path: string, ...pathSegments: string[]): ReturnType<typeof _doc> {
+  return isDev() ? _doc(firestore, "dev_"+path, ...pathSegments) : _doc(firestore, path, ...pathSegments)
+}
+function collection(firestore: Firestore, path: string, ...pathSegments: string[]): ReturnType<typeof _collection> {
+  try {
+    return isDev() ? _collection(firestore, "dev_"+path, ...pathSegments) : _collection(firestore, path, ...pathSegments)
+  } catch (e) {
+    console.error("collection", path, pathSegments, e)
+    throw e
+  }
+}
 
 /**
  * サークルをDBに追加
@@ -55,6 +65,10 @@ export async function getAllCircles(): Promise<CircleWithID[]> {
     id: doc.id,
   }))
   return data
+}
+
+export async function removeCircle(id: string) {
+  await setDoc(doc(firestore, "circles", id), {deleted: true})
 }
 
 /**
@@ -168,7 +182,7 @@ export async function getAllUsers(): Promise<UserdataWithID[]> {
  * @returns fullPath
  */
 export async function uploadImage(file: File, circleId: string): Promise<string> {
-  const imageRef = ref(storage, `/${circleId}/${file.name}`);
+  const imageRef = ref(storage, `/${isDev() && "dev/"}${circleId}/${file.name}`);
   const snapshot = await uploadBytes(imageRef, file)
   return snapshot.ref.fullPath
 }
@@ -177,6 +191,6 @@ export async function uploadImage(file: File, circleId: string): Promise<string>
  * ダウンロードURLを取得
  */
 export async function getURL(path: string): Promise<string> {
-  const url = await getDownloadURL(ref(storage, path))
+  const url = await getDownloadURL(ref(storage, `${isDev() && "/dev"}${path}`))
   return url
 }
