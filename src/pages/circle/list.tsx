@@ -3,6 +3,7 @@ import { getAllCircles } from "@/lib/db"
 import { CircleWithID, CircleCondition, circleCondition } from "@/lib/types"
 import { circleWingToString, isMatchCondition } from "@/lib/utils"
 import { Metadata, NextPageContext } from "next"
+import Head from "next/head"
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
 
@@ -37,6 +38,9 @@ export default function ListCircle(props: ListCircleProps) {
   }, [props.circles])
   return (
     <Layout title="サークル一覧">
+      <Head>
+        <title>サークル一覧</title>
+      </Head>
       <form className="flex flex-row mb-4 items-center" ref={formRef} onChange={() => {
         filterCircle()
       }}>

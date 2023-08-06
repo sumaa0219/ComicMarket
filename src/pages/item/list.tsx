@@ -5,6 +5,7 @@ import { getAllCircles, getAllItems, getAllUsers } from "@/lib/db";
 import { CircleCondition, CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString, isMatchCondition } from "@/lib/utils";
 import { NextPageContext } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
 
@@ -51,6 +52,9 @@ export default function ItemList(props: ItemListProps) {
   const formRef = useRef<HTMLFormElement>(null)
   return (
     <Layout title="購入物一覧">
+      <Head>
+        <title>購入物一覧</title>
+      </Head>
       <form
         className="flex flex-row mb-4 items-center"
         ref={formRef}

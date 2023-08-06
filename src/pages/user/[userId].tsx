@@ -3,6 +3,7 @@ import { getAllCircles, getAllItems, getAllUsers, getCircle, getItem, getUser } 
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -40,6 +41,9 @@ export default function Circle(props: ItemProps) {
 
 
   return (<Layout title="ユーザー詳細">
+    <Head>
+      <title>{props.user.name} | ユーザー詳細</title>
+    </Head>
     <div className="flex flex-row">
       <div className="avatar">
         <div className="w-24 rounded-xl">

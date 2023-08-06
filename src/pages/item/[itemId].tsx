@@ -2,6 +2,7 @@ import Layout from "@/components/layout";
 import { getAllUsers, getItem, removeBuyer } from "@/lib/db";
 import { ItemWithID, UserdataWithID } from "@/lib/types";
 import { NextPageContext } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -24,6 +25,9 @@ export default function Item(props: ItemProps) {
   const [item, setItem] = useState<ItemWithID>(props.item)
   const router = useRouter()
   return (<Layout title="購入物詳細">
+    <Head>
+      <title>{item.name} | 購入物詳細</title>
+    </Head>
     <div className="text-2xl">{item.name}</div>
     <div className="text-xl">{item.price}円</div>
 

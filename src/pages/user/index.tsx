@@ -4,6 +4,7 @@ import { UserdataWithID } from "@/lib/types";
 import { NextPageContext } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import Head from "next/head";
 
 User.getInitialProps = async (ctx: NextPageContext): Promise<UserProps> => {
   return {
@@ -16,6 +17,9 @@ interface UserProps {
 }
 export default function User(props: UserProps) {
   return (<Layout>
+    <Head>
+      <title>ユーザー一覧</title>
+    </Head>
     <div className="text-2xl">
       ユーザー一覧
     </div>

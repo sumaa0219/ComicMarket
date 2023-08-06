@@ -2,6 +2,7 @@ import Layout from "@/components/layout";
 import { useAuth } from "@/hooks/auth";
 import { getUser, addUser, updateUserName } from "@/lib/db";
 import { UserdataWithID } from "@/lib/types";
+import Head from "next/head";
 import { useEffect, useState } from "react";
 
 
@@ -23,6 +24,9 @@ export default function Settings() {
 
   return (
     <Layout center>
+      <Head>
+        <title>設定</title>
+      </Head>
       <h1>Settings</h1>
       <form onSubmit={e => {
         e.preventDefault()

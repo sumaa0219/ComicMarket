@@ -3,6 +3,7 @@ import { getAllItems, getAllUsers, getCircle, getURL, removeCircle } from "@/lib
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -31,6 +32,9 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 export default function Circle(props: ItemProps) {
   const router = useRouter()
   return (<Layout title="サークル詳細">
+    <Head>
+      <title>{props.circle.name} | サークル詳細</title>
+    </Head>
     <div className="text-2xl">{props.circle.name}</div>
     <div className="text-xl">{props.circle.day}日目</div>
     <div className="text-xl">{circleWingToString(props.circle.wing)}{props.circle.place}</div>
