@@ -7,12 +7,13 @@ import {
   getDocs,
   setDoc
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref as _ref, uploadBytes, FirebaseStorage } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { firestore, storage } from "./firebase";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID } from "./types";
 
 function isDev() {
+  return false
   return process.env.NODE_ENV === "development"
 }
 
@@ -26,6 +27,9 @@ function collection(firestore: Firestore, path: string, ...pathSegments: string[
     console.error("collection", path, pathSegments, e)
     throw e
   }
+}
+function ref(storage: FirebaseStorage, url?: string | undefined): ReturnType<typeof _ref> {
+  return isDev() ? _ref(storage, "dev_"+url) : _ref(storage, url)
 }
 
 /**
@@ -197,7 +201,7 @@ export async function getAllUsers(): Promise<UserdataWithID[]> {
  * @returns fullPath
  */
 export async function uploadImage(file: File, circleId: string): Promise<string> {
-  const imageRef = ref(storage, `/${isDev() && "dev/"}${circleId}/${file.name}`);
+  const imageRef = ref(storage, `/${circleId}/${file.name}`);
   const snapshot = await uploadBytes(imageRef, file)
   return snapshot.ref.fullPath
 }
@@ -206,6 +210,6 @@ export async function uploadImage(file: File, circleId: string): Promise<string>
  * ダウンロードURLを取得
  */
 export async function getURL(path: string): Promise<string> {
-  const url = await getDownloadURL(ref(storage, `${isDev() && "/dev"}${path}`))
+  const url = await getDownloadURL(ref(storage, path))
   return url
 }

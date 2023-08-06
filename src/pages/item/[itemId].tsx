@@ -56,7 +56,6 @@ export default function Item(props: ItemProps) {
                         ...prev,
                         users: prev.users.filter(u => u.uid !== user.uid)
                       }))
-                      // router.reload()
                     })
                   }} disabled={processing}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#ff0000" fill="none" strokeLinecap="round" strokeLinejoin="round">
