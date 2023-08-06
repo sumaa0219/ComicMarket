@@ -38,7 +38,7 @@ const nextConfig = {
     config,
     { isServer }
   ) {
-    if (config.plugins instanceof Array) {
+    if (config.plugins instanceof Array && process.env.NODE_ENV === 'production') {
       config.plugins.push(
         new sentryWebpackPlugin({
           org: process.env.SENTRY_ORG,
@@ -55,6 +55,9 @@ const nextConfig = {
   }
 }
 
+/**
+ * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
+ */
 const sentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
   // the following options are set automatically, and overriding them is not
@@ -73,10 +76,16 @@ const sentryWebpackPluginOptions = {
 
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options.
+  include: ".next",
 };
 
+/**
+ * @param {import('@sentry/nextjs/types/config/types').NextConfigObjectWithSentry} config
+ * @param {import('@sentry/nextjs').SentryWebpackPluginOptions} options
+ */
 function passSentry(config, options) {
-  return process.env.NODE_ENV === "production" ? withSentryConfig(config, options) : config
+  const { sentry: _sentry, ...configWithoutSentry } = config
+  return process.env.NODE_ENV === "production" ? withSentryConfig(config, options) : configWithoutSentry
 }
 
 module.exports = passSentry({
