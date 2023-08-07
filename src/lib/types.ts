@@ -82,33 +82,19 @@ interface Buy {
 }
 
 export const circleCondition = z.object({
-  name: z.string(),
-  place: z.string(),
+  name: z.string().default("").describe("サークル名"),
+  place: z.string().default("").describe("場所"),
   days: z.object({
     "1": z.boolean(),
     "2": z.boolean(),
-  }),
+  }).default({ "1": true, "2": true }).describe("日付"),
   wings: z.object({
     west: z.boolean(),
     east: z.boolean(),
     south: z.boolean(),
-  })
-})
+  }).default({ west: true, east: true, south: true }).describe("棟"),
+}).describe("サークル検索条件")
 
-/** サークル検索条件 */
-// export interface CircleCondition {
-//   name: string;
-//   place: string;
-//   days: {
-//     "1": boolean;
-//     "2": boolean;
-//   };
-//   wings: {
-//     west: boolean;
-//     east: boolean;
-//     south: boolean;
-//   };
-// }
 export type CircleCondition = z.infer<typeof circleCondition>
 
 export interface Userdata {

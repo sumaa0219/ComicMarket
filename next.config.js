@@ -41,8 +41,8 @@ const nextConfig = {
     if (config.plugins instanceof Array && process.env.NODE_ENV === 'production') {
       config.plugins.push(
         new sentryWebpackPlugin({
-          org: process.env.SENTRY_ORG,
-          project: process.env.SENTRY_PROJECT,
+          org: "cabbagelettuce916",
+          project: "comicmarket",
 
           // Auth tokens can be obtained from https://sentry.io/settings/account/api/auth-tokens/
           // and need `project:releases` and `org:read` scopes
