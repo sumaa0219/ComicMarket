@@ -1,5 +1,10 @@
 import { CircleCondition, CircleWithID, circleCondition, circleWithID } from "./types"
 
+/**
+ * サークルが検索条件にマッチするかどうかを判定
+ * @param conditionArg 検索条件
+ * @param circleArg サークル情報
+ */
 export function isMatchCondition(conditionArg: CircleCondition, circleArg: CircleWithID): boolean {
   const condition = circleCondition.parse(conditionArg)
   const circleParse = circleWithID.safeParse(circleArg)
