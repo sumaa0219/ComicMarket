@@ -43,20 +43,23 @@ export default function Add(props: AddProps) {
               setStep(s => s + 1)
             }}
           />,
-          <div key={undefined} className="flex flex-col">
+          circle && item && user && <div key={step} className="flex flex-col">
             <div>
               以下の購入物が追加されました
             </div>
             <div className="flex justify-center text-xl">
-              {item?.name}
+              サークル : {circle.name}
+            </div>
+            <div className="flex justify-center text-xl">
+              購入物 : {item.name}
             </div>
             <div className="flex justify-center">
-              {item?.price}円
+              {item?.price ?? "??"}円
             </div>
             <div className="flex justify-center">
-              {item?.users.find(u => u.uid === user?.uid)?.count}個
+              {item.users.find(u => u.uid === user.uid)?.count ?? "??"}個
             </div>
-            <Link href={`/item/${item?.id}`}>
+            <Link href={`/item/${item.id}`}>
               <button className="btn w-full mt-4">購入物の詳細</button>
             </Link>
             <button className="btn w-full mt-4" onClick={() => setStep(2)}>同じサークルで登録を続ける</button>

@@ -39,8 +39,10 @@ function ref(storage: FirebaseStorage, url?: string | undefined): ReturnType<typ
 /**
  * サークルをDBに追加
  */
-export async function addCircle(circle: Circle, admin = false) {
-  const id = uuidv4()
+export async function addCircle(circle: Circle, id: string = uuidv4()) {
+  if (!id) {
+    const id = uuidv4()
+  }
   const data = {
     deleted: false,
     ...circle,

@@ -15,7 +15,7 @@ export default function AddCircle(props: AddCircleProps) {
   const [warn, setWarn] = useState<string>("")
 
   const [sending, setSending] = useState(false)
-  
+
   async function showWarn(msg: string) {
     setWarn(msg)
     await new Promise(r => setTimeout(r, 5000))
@@ -87,8 +87,9 @@ export default function AddCircle(props: AddCircleProps) {
       type="submit"
       className="btn btn-primary mt-8"
       disabled={sending}
-      onClick={(e) => {
+      onClick={async (e) => {
         setSending(true)
+        console.log("sending")
         if (circle) {
           props.onSelect?.(circle)
         } else {
@@ -99,7 +100,7 @@ export default function AddCircle(props: AddCircleProps) {
               day: formRef.current.circleDay.value,
               wing: formRef.current.circleWing.value,
             };
-            const file = formRef.current.circleImage.files?.[0]
+            const file = (formRef.current.circleImage as HTMLInputElement).files?.[0]
 
             // 重複するサークルがないか確認
             const duplicateCheck = {
@@ -111,26 +112,27 @@ export default function AddCircle(props: AddCircleProps) {
             } else if (duplicateCheck.place) {
               showWarn("同じ場所にサークルが存在")
             } else {
-              (async ()=>{
-                const data = await addCircle(formData)
+              // (async ()=>{
+              const data = await addCircle(formData)
 
-                if (file) {
-                  const fullPath = await uploadImage(file, data.id)
-                  await updateCircle({
-                    ...data,
-                    menuImagePath: fullPath,
-                  })
-                }
+              if (file) {
+                const fullPath = await uploadImage(file, data.id)
+                await updateCircle({
+                  ...formData,
+                  menuImagePath: fullPath,
+                }, data.id)
+              }
 
-                props.onSelect?.(data)
-              })()
+              props.onSelect?.(data)
+              // })()
             }
           }
         }
         setSending(false)
+        console.log("sending end")
       }}
-    >次へ</button>
-    {warn  && <div className="ml-4 mt-12 text-red-400">
+    >{sending ? "次へ" : "送信中 ..."}</button>
+    {warn && <div className="alert alert-warning mt-8">
       {warn}
     </div>}
   </Fragment>
