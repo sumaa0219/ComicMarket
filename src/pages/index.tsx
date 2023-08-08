@@ -26,7 +26,11 @@ export default function Home({ COMMIT_SHA }: HomeProps) {
         <Link className="text-xl mb-2 link" href="/item/list">購入物一覧</Link>
         <Link className="text-xl mb-2 link" href={`/user/${user?.uid}`}>自分の購入物一覧</Link>
       </div>
-      <div className="mt-48 text-neutral">COMMIT_SHA: {COMMIT_SHA}</div>
+      <div className="mt-48 text-neutral">
+        <Link href={`https://github.com/sumaa0219/ComicMarket/tree/${COMMIT_SHA}`} target="_blank">
+          COMMIT_SHA: {COMMIT_SHA}
+        </Link>
+      </div>
     </Layout>
   )
 }
