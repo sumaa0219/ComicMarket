@@ -87,7 +87,17 @@ export default function Circle(props: ItemProps) {
               <tr key={`${i}-${j}`}>
                 <td>
                   <Link href={`/circle/${item.circleId}`}>
-                    {props.circles.find(c => c.id === item.circleId)?.name}
+                    {(()=>{
+                      const circle = props.circles.find(c => c.id === item.circleId)
+                      if (circle) {
+                        let circleName = circle.name
+                        if (circle.deleted) {
+                          circleName += "(削除済み)"
+                        }
+                      } else {
+                        return "サークルが見つかりません"
+                      }
+                    })()}
                   </Link>
                 </td>
                 <td>

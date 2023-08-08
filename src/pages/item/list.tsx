@@ -41,7 +41,7 @@ export default function ItemList(props: ItemListProps) {
     }
   })
 
-  useEffect(()=>{
+  useEffect(() => {
     if (circle != null) {
       setItems(props.items.filter(i => i.circleId == circle.id))
     } else {
@@ -129,15 +129,15 @@ export default function ItemList(props: ItemListProps) {
             {items.map((item, i) => (
               <tr className="" key={i}>
                 <td className="">
-                    {(()=>{
-                      const circle = props.circles.find(c => c.id === item.circleId)
-                      if (circle == null) return "サークルが見つかりません"
-                      return (
-                        <Link href={`/circle/${circle.id}`}>
-                          {circle.name} （{circle.day}日目 {circleWingToString(circle.wing)}{circle.place}）
-                        </Link>
-                      )
-                    })()}
+                  {(() => {
+                    const circle = props.circles.find(c => c.id === item.circleId)
+                    if (circle == null) return "サークルが見つかりません"
+                    return (
+                      <Link href={`/circle/${circle.id}`}>
+                        {circle.name} （{circle.day}日目 {circleWingToString(circle.wing)}{circle.place}）
+                      </Link>
+                    )
+                  })()}
                 </td>
                 <td className="">
                   <Link href={`/item/${item.id}`}>
