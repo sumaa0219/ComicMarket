@@ -1,7 +1,7 @@
 import Layout from "@/components/layout"
 import { getAllCircles } from "@/lib/db"
 import { CircleWithID, CircleCondition, circleCondition } from "@/lib/types"
-import { circleWingToString, isMatchCondition } from "@/lib/utils"
+import { circleWingToString, filterDeleted, isMatchCondition } from "@/lib/utils"
 import { Metadata, NextPageContext } from "next"
 import Head from "next/head"
 import Link from "next/link"
@@ -92,7 +92,7 @@ export default function ListCircle(props: ListCircleProps) {
             </tr>
           </thead>
           <tbody>
-            {circles.filter(c => !c.deleted).map((c, i) => (
+            {filterDeleted(circles).map((c, i) => (
               <tr className="" key={i}>
                 <td className="">
                   <Link href={`/circle/${c.id}`} className="w-full">

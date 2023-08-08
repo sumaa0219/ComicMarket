@@ -1,5 +1,5 @@
 import { CircleWithID } from "@/lib/types";
-import { circleWingToString, isMatchCondition } from "@/lib/utils";
+import { circleWingToString, filterDeleted, isMatchCondition } from "@/lib/utils";
 import { createContext, useContext, useState, useRef, useEffect, Fragment, ReactNode, Dispatch, SetStateAction } from "react";
 
 interface CircleSelectorComponentProps {
@@ -126,14 +126,13 @@ export function CircleSelectorComponent(props: CircleSelectorComponentProps) {
     }
   })
   const initialCircleData = props.circles
-  const [circles, setCircles] = useState<CircleWithID[]>(initialCircleData)
+  const [circles, setCircles] = useState<CircleWithID[]>(filterDeleted(initialCircleData))
   useEffect(() => {
     setCircles(initialCircleData.filter(c => isMatchCondition(formData, c)))
   }, [formData, initialCircleData])
   return (
     <FormDataContext.Provider value={{ data: formData, setData: setFormData }}>
       <CircleSelectorForm className="m-8 mb-0" />
-
       <ul className="flex flex-col text-lg w-[28rem] max-h-[50vh] m-8 overflow-scroll">
         <li className="flex flex-row text-gray-500 border-b border-b-gray-500 sticky top-0 bg-base-100 ">
           <div className="w-2/5 flex justify-center">サークル名</div>
@@ -142,7 +141,7 @@ export function CircleSelectorComponent(props: CircleSelectorComponentProps) {
           <div className="w-1/5 flex justify-center">出店場所</div>
         </li>
 
-        {circles.length > 0 ? circles.filter(c => !c.deleted).map((c, i) => (
+        {circles.length > 0 ? circles.map((c, i) => (
           <li
             className="flex flex-row mt-2 rounded-lg hover:bg-neutral-focus active:bg-neutral transition-[background-color] p-2 cursor-pointer select-none"
             onPointerDown={() => {

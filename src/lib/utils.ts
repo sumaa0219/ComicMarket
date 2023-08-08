@@ -8,18 +8,20 @@ export function isMatchCondition(conditionArg: CircleCondition, circleArg: Circl
     return false
   }
   const { data: circle } = circleParse
+  console.log(condition, circle)
+  
   return (
     (
-      condition.name.length !== 0 && circle.name.includes(condition.name)
+      condition.name.length === 0 ?? circle.name.includes(condition.name)
+    ) &&
+    (
+      condition.place.length === 0 ?? circle.place.includes(condition.place)
     ) &&
     (
       condition.days[circle.day]
     ) &&
     (
       condition.wings[circle.wing]
-    ) &&
-    (
-      condition.place.length !== 0 && circle.place.includes(condition.place)
     )
   )
 }
@@ -30,4 +32,17 @@ export function circleWingToString(wing: "west" | "east" | "south") {
     east: "東",
     south: "南",
   } as const)[wing]
+}
+
+/**
+ * 削除済みサークルを除外
+ */
+export function filterDeleted(circle: CircleWithID): boolean
+export function filterDeleted(circle: CircleWithID[]): CircleWithID[]
+export function filterDeleted(circle: CircleWithID | CircleWithID[]): boolean | CircleWithID[] {
+  if (Array.isArray(circle)) {
+    return circle.filter(filterDeleted)
+  } else {
+    return !circle.deleted
+  }
 }

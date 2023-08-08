@@ -13,8 +13,12 @@ import { firestore, storage } from "./firebase";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID } from "./types";
 
 function isDev() {
-  return false
-  return process.env.NODE_ENV === "development"
+  // return false
+  const condition = process.env.NODE_ENV === "development"
+  if (condition) {
+    console.log("[db] firestore now dev mode")
+  }
+  return condition
 }
 
 function doc(firestore: Firestore, path: string, ...pathSegments: string[]): ReturnType<typeof _doc> {
