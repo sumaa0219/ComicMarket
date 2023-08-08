@@ -31,7 +31,7 @@ export type Circle = z.infer<typeof circle>
 // }
 
 export const circleWithID = circle.extend({
-  id: z.string(),
+  id: z.string().uuid().describe("サークルID"),
 })
 export type CircleWithID = z.infer<typeof circleWithID>
 // export interface CircleWithID extends Circle {

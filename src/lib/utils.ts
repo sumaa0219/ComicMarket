@@ -8,14 +8,12 @@ export function isMatchCondition(conditionArg: CircleCondition, circleArg: Circl
     return false
   }
   const { data: circle } = circleParse
-  console.log(condition, circle)
-  
   return (
     (
-      condition.name.length === 0 ?? circle.name.includes(condition.name)
+      condition.name.length === 0 || circle.name.includes(condition.name)
     ) &&
     (
-      condition.place.length === 0 ?? circle.place.includes(condition.place)
+      condition.place.length === 0 || circle.place.includes(condition.place)
     ) &&
     (
       condition.days[circle.day]
