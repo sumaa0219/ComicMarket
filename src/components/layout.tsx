@@ -70,8 +70,8 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
             <Auth />
           </div>
         </div>
-        <div className={`p-4 flex ${center && "justify-center"}`}>
-          <div className="block w-full h-full">
+        <div className={`p-4`}>
+          <div className={`w-full h-full ${center ? "flex justify-center" : "block"}`}>
           {(state === "logouted" || !loginNotNeededPaths.some(path => path.test(router.pathname)))
             ? props.children
             : <div>

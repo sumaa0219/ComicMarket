@@ -1,5 +1,5 @@
 import Layout from "@/components/layout";
-import { getAllCircles, getAllItems, getAllUsers, getCircle, getItem, getUser } from "@/lib/db";
+import { getAllCircles, getAllItems, getAllUsers, getCircle, getItem, getUser, removeBuyer } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
@@ -16,7 +16,10 @@ interface ItemProps {
 
 Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
   const { userId } = ctx.query as { userId: string }
-  const items = (await getAllItems()).filter(item => item.users.find(u => u.uid === userId))
+  /**
+   * このユーザーが購入した購入物のみを取得する
+   */
+  const items: ItemWithID[] = (await getAllItems()).filter(item => item.users.find(u => u.uid === userId))
   return {
     circles: await getAllCircles(),
     user: await getUser(userId),
@@ -25,20 +28,20 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 }
 
 export default function Circle(props: ItemProps) {
+  const [processing, setProcessing] = useState(false)
+  const [items, setItems] = useState<ItemWithID[]>(props.items)
+
   let totalPrice = 0
-  if (props.items.length === 0) {
+  if (items.length === 0) {
     totalPrice = 0
   }
   else {
     let price = 0
-    props.items.map((item, i) => item.users.map((user, j) => (
+    items.map((item, i) => item.users.map((user, j) => (
       price += Number(item.price) * Number(user.count)
     )))
     totalPrice = price
   }
-
-
-
 
   return (<Layout title="ユーザー詳細">
     <Head>
@@ -60,7 +63,7 @@ export default function Circle(props: ItemProps) {
       合計金額:{totalPrice}円
     </div>
 
-
+    削除ボタン使うな
     <div className="mt-12">
       購入物一覧
     </div>
@@ -71,16 +74,17 @@ export default function Circle(props: ItemProps) {
             <th>サークル名</th>
             <th>購入物</th>
             <th>個数</th>
+            <th>削除</th>
           </tr>
         </thead>
         <tbody>
-          {props.items.length === 0
+          {items.length === 0
             ? <tr>
               <td>
                 データなし
               </td>
             </tr>
-            : props.items.map((item, i) => item.users.map((user, j) => (
+            : items.map((item, i) => item.users.map((user, j) => (
               <tr key={`${i}-${j}`}>
                 <td>
                   <Link href={`/circle/${item.circleId}`}>
@@ -93,6 +97,28 @@ export default function Circle(props: ItemProps) {
                   </Link>
                 </td>
                 <td>{user.count}</td>
+                <td>
+                  <button className="btn btn-outline btn-sm btn-square btn-ghost" onClick={e => {
+                    e.preventDefault()
+                    setProcessing(true)
+                    removeBuyer(item.id, user.uid).then(() => {
+                      setProcessing(false)
+                      setItems(prev => prev.map(p => p.id === item.id ? {
+                        ...p,
+                        users: p.users.filter(u => u.uid !== user.uid)
+                      } : p))
+                    })
+                  }} disabled={processing}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#ff0000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" />
+                      <line x1="4" y1="7" x2="20" y2="7" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    </svg>
+                  </button>
+                </td>
               </tr>
             )))}
         </tbody>

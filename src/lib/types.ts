@@ -42,7 +42,7 @@ export const item = z.object({
   price: z.number().int().positive().describe("価格"),
 
   users: z.array(z.object({
-    uid: z.string().uuid().describe("購入者のUID"),
+    uid: z.string().describe("購入者のUID"),
     count: z.number().int().positive().describe("個数"),
     priority: z.number().int().positive().describe("優先度"),
   })).default([]).describe("購入者"),

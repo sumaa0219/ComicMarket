@@ -106,8 +106,8 @@ export default function AddItem(props: AddItemProps) {
           if (props.circle && user) {
             const buyData = {
               uid: user.uid,
-              count: addFormRef.current?.itemCount.value,
-              priority: addFormRef.current?.priority.value,
+              count: parseInt(addFormRef.current?.itemCount.value),
+              priority: parseInt(addFormRef.current?.priority.value),
             };
             let addedItem: ItemWithID
             if (item) {
