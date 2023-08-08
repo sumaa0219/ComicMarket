@@ -13,7 +13,7 @@ import { firestore, storage } from "./firebase";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID, circle, item } from "./types";
 
 function isDev() {
-  // return false
+  return false
   const condition = process.env.NODE_ENV === "development"
   if (condition) {
     console.log("[db] firestore now dev mode")
