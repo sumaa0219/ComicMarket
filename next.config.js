@@ -15,9 +15,6 @@ const sentryWebpackPlugin = require("@sentry/webpack-plugin");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  env: {
-    NEXT_PUBLIC_COMMIT_SHA: process.env.NEXT_PUBLIC_COMMIT_SHA ?? "UNKNOWN_COMMIT_SHA"
-  },
   images: {
     remotePatterns: [
       {

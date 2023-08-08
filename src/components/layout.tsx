@@ -96,9 +96,6 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
               </li>
             ))
           }
-          <li className="mt-12">
-            {process.env.NEXT_PUBLIC_COMMIT_SHA}
-          </li>
         </ul>
       </div>
     </div>

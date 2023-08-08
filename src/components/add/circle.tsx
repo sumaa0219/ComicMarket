@@ -89,7 +89,6 @@ export default function AddCircle(props: AddCircleProps) {
       disabled={sending}
       onClick={async (e) => {
         setSending(true)
-        console.log("sending")
         if (circle) {
           props.onSelect?.(circle)
         } else {
@@ -127,7 +126,6 @@ export default function AddCircle(props: AddCircleProps) {
           }
         }
         setSending(false)
-        console.log("sending end")
       }}
     >{sending ? "送信中 ..." : "次へ"}</button>
     {warn && <div className="alert alert-warning mt-8">
