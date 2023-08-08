@@ -28,7 +28,7 @@ export default function Item(props: ItemProps) {
   const [item, setItem] = useState<ItemWithID>(props.item)
   return (<Layout title="購入物詳細">
     <Head>
-      <title>{item.name} | 購入物詳細</title>
+      <title>{`${item.name} | 購入物詳細`}</title>
     </Head>
     <div className="flex flex-col">
       <div className="flex flex-row">
