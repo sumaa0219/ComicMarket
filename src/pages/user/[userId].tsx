@@ -63,7 +63,6 @@ export default function Circle(props: ItemProps) {
       合計金額:{totalPrice}円
     </div>
 
-    削除ボタン使うな
     <div className="mt-12">
       購入物一覧
     </div>
