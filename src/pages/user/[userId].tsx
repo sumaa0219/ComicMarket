@@ -1,7 +1,6 @@
 import Layout from "@/components/layout";
-import { getAllCircles, getAllItems, getAllUsers, getCircle, getItem, getUser, removeBuyer } from "@/lib/db";
+import { getAllCircles, getAllItems, getUser, removeBuyer } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
-import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -45,7 +44,7 @@ export default function Circle(props: ItemProps) {
 
   return (<Layout title="ユーザー詳細">
     <Head>
-      <title>{props.user.name} | ユーザー詳細</title>
+      <title>{`${props.user.name} | ユーザー詳細`}</title>
     </Head>
     <div className="flex flex-row">
       <div className="avatar">
