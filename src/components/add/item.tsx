@@ -23,6 +23,11 @@ export default function AddItem(props: AddItemProps) {
 
   const [sending, setSending] = useState(false)
 
+  function scrollPrevent(e: React.WheelEvent<HTMLInputElement>) {
+    e.currentTarget.blur()
+    e.preventDefault()
+  }
+
   return props.items && props.circle && (
     <Fragment>
       {
@@ -52,12 +57,21 @@ export default function AddItem(props: AddItemProps) {
             <label className="label" htmlFor="itemName">
               <span className="label-text">購入物名</span>
             </label>
-            <input type="text" id="itemName" placeholder="例 : 新刊セット" className="input input-bordered" required disabled={sending} />
+            <input type="text" id="itemName" placeholder="例 : 新刊セット" className="input input-bordered"
+              required
+              disabled={sending}
+            />
 
             <label className="label" htmlFor="itemPrice">
               <span className="label-text">価格</span>
             </label>
-            <input type="number" id="itemPrice" placeholder="例 : 500" className="input input-bordered" defaultValue={500} required disabled={sending} />
+            <input type="number" id="itemPrice" placeholder="例 : 500" className="input input-bordered"
+              min={1}
+              defaultValue={500}
+              required
+              disabled={sending}
+              onWheel={scrollPrevent}
+            />
           </form>
         </Fragment>
       }
@@ -86,7 +100,12 @@ export default function AddItem(props: AddItemProps) {
         <label className="label" htmlFor="itemCount">
           <span className="label-text">個数</span>
         </label>
-        <input type="number" id="itemCount" placeholder="1" className="input input-bordered" disabled={sending} required />
+        <input type="number" id="itemCount" placeholder="1" defaultValue={1} className="input input-bordered"
+          disabled={sending}
+          required
+          min={1}
+          onWheel={scrollPrevent}
+        />
 
         <label className="label" htmlFor="priority">
           <span className="label-text">優先度</span>

@@ -10,7 +10,7 @@ import {
 import { getDownloadURL, ref as _ref, uploadBytes, FirebaseStorage } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { firestore, storage } from "./firebase";
-import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID, circle, item } from "./types";
+import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID, circle, circleWithID, item, itemWithID } from "./types";
 
 function isDev() {
   return false
@@ -61,10 +61,11 @@ export const updateCircle = addCircle
  */
 export async function getCircle(id: string) {
   const docRef = await getDoc(doc(firestore, "circles", id))
-  return {
+  
+  return circleWithID.parse({
     ...docRef.data(),
     id: docRef.id,
-  } as CircleWithID
+  })
 }
 
 /**
@@ -151,12 +152,12 @@ export async function getAllItems(): Promise<ItemWithID[]> {
  * IDから購入物情報を取得
  * @param id 購入物ID
  */
-export async function getItem(id: string) {
+export async function getItem(id: string): Promise<ItemWithID> {
   const docRef = await getDoc(doc(firestore, "items", id))
-  return {
+  return itemWithID.parse({
     ...docRef.data(),
     id: docRef.id,
-  }
+  })
 }
 
 /**

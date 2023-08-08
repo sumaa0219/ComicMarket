@@ -40,6 +40,10 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
       title: "購入物・サークル追加",
       href: "/add"
     },
+    {
+      title: "ユーザー一覧",
+      href: "/user"
+    },
   ]
 
   const router = useRouter()

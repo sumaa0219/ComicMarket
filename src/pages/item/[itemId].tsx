@@ -1,21 +1,24 @@
 import Layout from "@/components/layout";
-import { getAllUsers, getItem, removeBuyer } from "@/lib/db";
-import { ItemWithID, UserdataWithID } from "@/lib/types";
+import { getAllUsers, getCircle, getItem, removeBuyer } from "@/lib/db";
+import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
+import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 interface ItemProps {
   item: ItemWithID,
+  circle: CircleWithID,
   users: UserdataWithID[];
 }
 
 Item.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
   const { itemId } = ctx.query
+  const item = await getItem(itemId as string)
   return {
-    item: await getItem(itemId as string) as ItemWithID,
+    item: item,
+    circle: await getCircle(item.circleId),
     users: await getAllUsers(),
   }
 }
@@ -23,13 +26,20 @@ Item.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 export default function Item(props: ItemProps) {
   const [processing, setProcessing] = useState(false)
   const [item, setItem] = useState<ItemWithID>(props.item)
-  const router = useRouter()
   return (<Layout title="購入物詳細">
     <Head>
       <title>{item.name} | 購入物詳細</title>
     </Head>
-    <div className="text-2xl">{item.name}</div>
-    <div className="text-xl">{item.price}円</div>
+    <div className="flex flex-col">
+      <div className="flex flex-row">
+        <div className="text-3xl">{item.name}</div>
+        <div className="text-2xl ml-4 flex items-end">{item.price}円</div>
+      </div>
+      <Link className="flex flex-row mt-4" href={`/circle/${props.circle.id}`}>
+        <div className="text-xl">{props.circle.name}</div>
+        <div className="text-xl ml-4">{props.circle.day}日目 {circleWingToString(props.circle.wing)} {props.circle.place}</div>
+      </Link>
+    </div>
 
     <div className="w-96 overflow-x-auto">
       <table className="table">
