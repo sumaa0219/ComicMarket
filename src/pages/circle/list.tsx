@@ -23,7 +23,7 @@ ListCircle.getInitialProps = async (ctx: NextPageContext): Promise<ListCirclePro
 }
 
 export default function ListCircle(props: ListCircleProps) {
-  const [circles, setCircles] = useState<CircleWithID[]>(props.circles)
+  const [circles, setCircles] = useState<CircleWithID[]>(props.circles.sort((a, b) => a.name.localeCompare(b.name)))
   const formRef = useRef<HTMLFormElement>(null)
   const filterCircle = useCallback(()=>{
     if (formRef.current) {
