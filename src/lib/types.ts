@@ -1,16 +1,13 @@
-import type { User } from "firebase/auth";
 import { z } from "zod";
 
-type WithId<I> = I & { id: string }
-
 export const circle = z.object({
-  name: z.string().describe("サークル名"),
+  name: z.string().nonempty().describe("サークル名"),
   day: z.union([z.literal("1"), z.literal("2")]),
   wing: z.union([z.literal("west"), z.literal("east"), z.literal("south")]),
-  place: z.string(),
+  place: z.string().nonempty(),
 
   menuImagePath: z.string().optional(),
-  deleted: z.boolean().optional(),
+  deleted: z.boolean().default(false).optional(),
 })
 /** サークル */
 export type Circle = z.infer<typeof circle>
@@ -41,14 +38,14 @@ export type CircleWithID = z.infer<typeof circleWithID>
 
 export const item = z.object({
   circleId: z.string().uuid().describe("サークルID"),
-  name: z.string().describe("商品名"),
+  name: z.string().nonempty().describe("商品名"),
   price: z.number().int().positive().describe("価格"),
 
   users: z.array(z.object({
     uid: z.string().uuid().describe("購入者のUID"),
     count: z.number().int().positive().describe("個数"),
     priority: z.number().int().positive().describe("優先度"),
-  })),
+  })).default([]).describe("購入者"),
 
   deleted: z.boolean().default(false).optional(),
 })
@@ -77,24 +74,13 @@ export const item = z.object({
 
 export type Item = z.infer<typeof item>
 
-export interface ItemWithID extends Item {
-  id: string
-}
-
-interface Buy {
-  /** サークルID */
-  circleId: string;
-  /** 商品ID */
-  itemId: string;
-  /** 購入者のUID */
-  uid: string;
-  /** 個数 */
-  count: number;
-  /** 優先度 */
-  priority: number;
-  /** コメント */
-  comment: string;
-}
+export const itemWithID = item.extend({
+  id: z.string().uuid().describe("商品ID"),
+})
+// export interface ItemWithID extends Item {
+//   id: string
+// }
+export type ItemWithID = z.infer<typeof itemWithID>
 
 export const circleCondition = z.object({
   name: z.string().default("").describe("サークル名"),
@@ -112,11 +98,21 @@ export const circleCondition = z.object({
 
 export type CircleCondition = z.infer<typeof circleCondition>
 
-export interface Userdata {
-  name: string;
-  photoURL: NonNullable<User["photoURL"]>;
-}
+export const userdata = z.object({
+  name: z.string().describe("ユーザー名"),
+  photoURL: z.string().url().describe("プロフィール画像URL"),
+})
 
-export interface UserdataWithID extends Userdata {
-  id: string;
-}
+// export interface Userdata {
+//   name: string;
+//   photoURL: NonNullable<User["photoURL"]>;
+// }
+export type Userdata = z.infer<typeof userdata>
+
+export const userdataWithID = userdata.extend({
+  id: z.string().uuid().describe("ユーザーID"),
+})
+// export interface UserdataWithID extends Userdata {
+//   id: string;
+// }
+export type UserdataWithID = z.infer<typeof userdataWithID>

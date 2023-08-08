@@ -112,7 +112,6 @@ export default function AddCircle(props: AddCircleProps) {
             } else if (duplicateCheck.place) {
               showWarn("同じ場所にサークルが存在")
             } else {
-              // (async ()=>{
               const data = await addCircle(formData)
 
               if (file) {
@@ -124,7 +123,6 @@ export default function AddCircle(props: AddCircleProps) {
               }
 
               props.onSelect?.(data)
-              // })()
             }
           }
         }
