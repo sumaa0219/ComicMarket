@@ -131,7 +131,7 @@ export default function AddCircle(props: AddCircleProps) {
         setSending(false)
         console.log("sending end")
       }}
-    >{sending ? "次へ" : "送信中 ..."}</button>
+    >{sending ? "送信中 ..." : "次へ"}</button>
     {warn && <div className="alert alert-warning mt-8">
       {warn}
     </div>}

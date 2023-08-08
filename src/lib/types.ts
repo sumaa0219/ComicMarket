@@ -38,29 +38,44 @@ export type CircleWithID = z.infer<typeof circleWithID>
 //   id: string
 // }
 
+
+export const item = z.object({
+  circleId: z.string().uuid().describe("サークルID"),
+  name: z.string().describe("商品名"),
+  price: z.number().int().positive().describe("価格"),
+
+  users: z.array(z.object({
+    uid: z.string().uuid().describe("購入者のUID"),
+    count: z.number().int().positive().describe("個数"),
+    priority: z.number().int().positive().describe("優先度"),
+  })),
+
+  deleted: z.boolean().default(false).optional(),
+})
+
 /** 商品 */
-export interface Item {
-  /** サークルID */
-  circleId: string;
-  /** 商品名 */
-  name: string;
-  /** 価格 */
-  price: number;
+// export interface Item {
+//   /** サークルID */
+//   circleId: string;
+//   /** 商品名 */
+//   name: string;
+//   /** 価格 */
+//   price: number;
 
-  users: {
-    /** 購入者のUID */
-    uid: string;
-    /** 個数 */
-    count: number;
-    /** 優先度 */
-    priority: number;
-  }[];
+//   users: {
+//     /** 購入者のUID */
+//     uid: string;
+//     /** 個数 */
+//     count: number;
+//     /** 優先度 */
+//     priority: number;
+//   }[];
 
-  /** DB用 : 購入物ID */
-  id?: string;
-  /** DB用 : 削除済み */
-  deleted?: boolean;
-}
+//   /** DB用 : 削除済み */
+//   deleted?: boolean;
+// }
+
+export type Item = z.infer<typeof item>
 
 export interface ItemWithID extends Item {
   id: string
