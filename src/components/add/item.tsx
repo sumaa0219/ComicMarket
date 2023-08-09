@@ -74,7 +74,7 @@ export default function AddItem(props: AddItemProps) {
               <span className="label-text">価格</span>
             </label>
             <input type="number" id="itemPrice" placeholder="例 : 500" className="input input-bordered"
-              min={1}
+              min={0}
               defaultValue={500}
               required
               disabled={sending}

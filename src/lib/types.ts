@@ -39,7 +39,7 @@ export type CircleWithID = z.infer<typeof circleWithID>
 export const item = z.object({
   circleId: z.string().uuid().describe("サークルID"),
   name: z.string().nonempty().describe("商品名"),
-  price: z.number().int().positive().describe("価格"),
+  price: z.number().int().min(0).describe("価格"),
 
   users: z.array(z.object({
     uid: z.string().describe("購入者のUID"),
@@ -50,36 +50,11 @@ export const item = z.object({
   deleted: z.boolean().default(false).optional(),
 })
 
-/** 商品 */
-// export interface Item {
-//   /** サークルID */
-//   circleId: string;
-//   /** 商品名 */
-//   name: string;
-//   /** 価格 */
-//   price: number;
-
-//   users: {
-//     /** 購入者のUID */
-//     uid: string;
-//     /** 個数 */
-//     count: number;
-//     /** 優先度 */
-//     priority: number;
-//   }[];
-
-//   /** DB用 : 削除済み */
-//   deleted?: boolean;
-// }
-
 export type Item = z.infer<typeof item>
 
 export const itemWithID = item.extend({
   id: z.string().uuid().describe("商品ID"),
 })
-// export interface ItemWithID extends Item {
-//   id: string
-// }
 export type ItemWithID = z.infer<typeof itemWithID>
 
 export const circleCondition = z.object({
@@ -104,16 +79,9 @@ export const userdata = z.object({
   photoURL: z.string().url().describe("プロフィール画像URL"),
 })
 
-// export interface Userdata {
-//   name: string;
-//   photoURL: NonNullable<User["photoURL"]>;
-// }
 export type Userdata = z.infer<typeof userdata>
 
 export const userdataWithID = userdata.extend({
   id: z.string().uuid().describe("ユーザーID"),
 })
-// export interface UserdataWithID extends Userdata {
-//   id: string;
-// }
 export type UserdataWithID = z.infer<typeof userdataWithID>
