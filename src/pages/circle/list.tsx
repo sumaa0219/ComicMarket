@@ -2,7 +2,7 @@ import CircleFilterForm from "@/components/circleFilterForm"
 import Layout from "@/components/layout"
 import { getAllCircles } from "@/lib/db"
 import { CircleWithID, CircleCondition, circleCondition } from "@/lib/types"
-import { circleWingToString, filterDeleted, isMatchCondition } from "@/lib/utils"
+import { circleWingToString, filterDeleted, isMatchCondition, sortCircleByDP } from "@/lib/utils"
 import { Metadata, NextPageContext } from "next"
 import Head from "next/head"
 import Link from "next/link"
@@ -24,7 +24,8 @@ ListCircle.getInitialProps = async (ctx: NextPageContext): Promise<ListCirclePro
 }
 
 export default function ListCircle(props: ListCircleProps) {
-  const initialCircles = props.circles.sort((a, b) => a.name.localeCompare(b.name))
+  // const initialCircles = props.circles.sort((a, b) => a.name.localeCompare(b.name))
+  const initialCircles = sortCircleByDP(props.circles)
   const [circles, setCircles] = useState<CircleWithID[]>(initialCircles)
 
   return (
