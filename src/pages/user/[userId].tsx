@@ -2,12 +2,12 @@ import CircleFilterForm from "@/components/circleFilterForm";
 import Layout from "@/components/layout";
 import { getAllCircles, getAllItems, getUser, removeBuyer } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
-import { circleToDatePlaceString, filterDeletedCircleItem, getCircleById } from "@/lib/utils";
+import { circleToDatePlaceString, filterDeletedCircleItem, getCircleById, sortItemByDP, sortItemByPriority } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ItemProps {
   circles: CircleWithID[];
@@ -31,16 +31,17 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 export default function Circle(props: ItemProps) {
   const [processing, setProcessing] = useState(false)
   const initialItems = props.items.filter(i => filterDeletedCircleItem(i, props.circles))
-  const sortedItems = initialItems.sort((a, b) => {
-    const circles = {
-      a: getCircleById(a.circleId, props.circles),
-      b: getCircleById(b.circleId, props.circles)
-    }
-    return (circles.a && circles.b)
-      ? circleToDatePlaceString(circles.a).localeCompare(circleToDatePlaceString(circles.b))
-      : 0
-  })
+  const [sortKey, setSortKey] = useState<"DP" | "priority-u" | "priority-d">("DP")
+  const sortedItems = sortItemByDP(initialItems, props.circles)
   const [items, setItems] = useState<ItemWithID[]>(sortedItems)
+  useEffect(() => {
+    console.log("sortKey", sortKey)
+    setItems(i =>
+      sortKey === "DP"
+        ? sortItemByDP(i, props.circles)
+        : sortItemByPriority(i, props.user.id, sortKey==="priority-u")
+    )
+  }, [props.circles, props.user.id, sortKey])
 
   return (<Layout title="ユーザー詳細">
     <Head>
@@ -86,8 +87,13 @@ export default function Circle(props: ItemProps) {
         <thead>
           <tr>
             <th>サークル</th>
-            <th>場所</th>
+            <th className="btn btn-sm" onClick={()=>{
+              setSortKey("DP")
+            }}>場所</th>
             <th>購入物</th>
+            <th className="btn btn-sm" onClick={() => {
+              setSortKey(prev => prev === "priority-u" ? "priority-d" : "priority-u")
+            }}>優先度</th>
             <th>個数</th>
             <th>単価</th>
             <th>小計</th>
@@ -112,7 +118,6 @@ export default function Circle(props: ItemProps) {
                         if (circle.deleted) {
                           circleName += "(削除済み)"
                         }
-                        // circleName += `(${circleToDatePlaceString(circle)})`
                         return circleName
                       } else {
                         return "サークルが見つかりません"
@@ -128,6 +133,25 @@ export default function Circle(props: ItemProps) {
                     {item.name}
                   </Link>
                 </td>
+                <td>{(() => {
+                  const priority = item.users.find(u => u.uid === props.user.id)?.priority
+                  if (priority) {
+                    return (
+                      <div className="rating">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <input
+                            key={`${item.id}-${user.uid}-${i}`}
+                            type="radio"
+                            className="mask bg-primary dark:bg-orange-400 mask-star"
+                            value={i}
+                            defaultChecked={i === priority}
+                            readOnly
+                          />
+                        ))}
+                      </div>
+                    )
+                  }
+                })()}</td>
                 <td>{user.count}</td>
                 <td>{Number(item.price).toLocaleString()}</td>
                 <td>{(Number(item.price) * Number(user.count)).toLocaleString()}</td>

@@ -24,7 +24,6 @@ ListCircle.getInitialProps = async (ctx: NextPageContext): Promise<ListCirclePro
 }
 
 export default function ListCircle(props: ListCircleProps) {
-  // const initialCircles = props.circles.sort((a, b) => a.name.localeCompare(b.name))
   const initialCircles = sortCircleByDP(props.circles)
   const [circles, setCircles] = useState<CircleWithID[]>(initialCircles)
 

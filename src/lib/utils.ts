@@ -119,6 +119,23 @@ export function sortItemByDP(items: ItemWithID[], circles: CircleWithID[]): Item
 }
 
 /**
+ * 購入物を購入者の優先度でソート
+ */
+export function sortItemByPriority(items: ItemWithID[], uid: ItemWithID["users"][0]["uid"], reverse = false): ItemWithID[] {
+  return items.sort((a, b) => {
+    const usersF = {
+      a: a.users.find(u => u.uid === uid),
+      b: b.users.find(u => u.uid === uid)
+    }
+    return (usersF.a && usersF.b)
+      ? reverse
+        ? usersF.a.priority - usersF.b.priority
+        : usersF.b.priority - usersF.a.priority
+      : 0
+  })
+}
+
+/**
  * 
  */
 export function filterItemsByCircles(items: ItemWithID[], circles: CircleWithID[]): ItemWithID[] {
