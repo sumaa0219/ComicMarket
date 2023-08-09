@@ -54,8 +54,16 @@ export default function AddItem(props: AddItemProps) {
               price: parseInt(newItemFormRef.current?.itemPrice.value),
             })
           }} className="form-control mb-6" onSubmit={e => e.preventDefault()}>
-            <label className="label" htmlFor="itemName">
+            <label className="label flex flex-col items-start" htmlFor="itemName">
               <span className="label-text">購入物名</span>
+              <span className="label-text">
+                表記ゆれがある場合は、一番簡潔かつ判別できる表記を使用してください。<br />
+                例 : 
+                <ul className="list-disc ml-4">
+                  <li>C102新刊セット → 新刊セット</li>
+                </ul>
+                また、入力前に上のボタンから既に登録された購入物がないかご確認ください。
+              </span>
             </label>
             <input type="text" id="itemName" placeholder="例 : 新刊セット" className="input input-bordered"
               required

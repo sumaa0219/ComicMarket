@@ -1,3 +1,4 @@
+import CircleFilterForm from "@/components/circleFilterForm";
 import Layout from "@/components/layout";
 import { getAllCircles, getAllItems, getUser, removeBuyer } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
@@ -29,19 +30,9 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 
 export default function Circle(props: ItemProps) {
   const [processing, setProcessing] = useState(false)
-  const [items, setItems] = useState<ItemWithID[]>(props.items.filter(i => filterDeletedCircleItem(i, props.circles)))
-
-  // let totalPrice = 0
-  // if (items.length === 0) {
-  //   totalPrice = 0
-  // }
-  // else {
-  //   let price = 0
-  //   items.map((item, i) => item.users.map((user, j) => (
-  //     price += Number(item.price) * Number(user.count)
-  //   )))
-  //   totalPrice = price
-  // }
+  const initialItems = props.items.filter(i => filterDeletedCircleItem(i, props.circles))
+  const [items, setItems] = useState<ItemWithID[]>(initialItems)
+  // const [circles, setCircles] = useState<CircleWithID[]>(props.circles)
 
   return (<Layout title="ユーザー詳細">
     <Head>
@@ -70,8 +61,19 @@ export default function Circle(props: ItemProps) {
     </div>
 
     <div className="mt-12">
-      購入物一覧
+      購入物一覧 ({items.length}件)
     </div>
+
+    <CircleFilterForm
+      circles={props.circles}
+      onChange={(_circle) => {
+        console.log(_circle.length)
+        const circleIDs = _circle.map(c => c.id)
+        const newItems = initialItems.filter(i => circleIDs.includes(i.circleId))
+        setItems(newItems)
+      }}
+    />
+
     <div className="overflow-x-auto">
       <table className="table">
         <thead>
@@ -95,7 +97,7 @@ export default function Circle(props: ItemProps) {
               <tr key={`${i}-${j}`}>
                 <td>
                   <Link href={`/circle/${item.circleId}`}>
-                    {((): string =>{
+                    {((): string => {
                       const circle = props.circles.find(c => c.id === item.circleId)
                       if (circle) {
                         let circleName = circle.name

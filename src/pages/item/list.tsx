@@ -38,7 +38,8 @@ export default function ItemList(props: ItemListProps) {
       west: true,
       east: true,
       south: true,
-    }
+    },
+    excludeDeleted: true,
   })
 
   useEffect(() => {

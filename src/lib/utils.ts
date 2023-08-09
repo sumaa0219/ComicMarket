@@ -26,6 +26,8 @@ export function isMatchCondition(conditionArg: CircleCondition, circleArg: Circl
     ) &&
     (
       condition.wings[circle.wing]
+    ) && (
+      condition.excludeDeleted ? !circle.deleted : true
     )
   )
 }

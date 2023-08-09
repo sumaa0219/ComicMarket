@@ -94,6 +94,7 @@ export const circleCondition = z.object({
     east: z.boolean(),
     south: z.boolean(),
   }).default({ west: true, east: true, south: true }).describe("棟"),
+  excludeDeleted: z.boolean().default(true).describe("削除済みを除外するか"),
 }).describe("サークル検索条件")
 
 export type CircleCondition = z.infer<typeof circleCondition>
