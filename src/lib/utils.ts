@@ -74,3 +74,11 @@ export function filterDeletedCircleItem(item: ItemWithID, circle?: CircleWithID 
     return getCircle(item.circleId).then(c => filterDeleted(c))
   }
 }
+
+export function getCircleById(id: CircleWithID["id"], circle: CircleWithID[]): CircleWithID | undefined {
+  return circle.find(c => c.id === id)
+}
+
+export function circleToDatePlaceString(circle: CircleWithID): string {
+  return `${circle.day}日目 ${circleWingToString(circle.wing)}${circle.place}`
+}

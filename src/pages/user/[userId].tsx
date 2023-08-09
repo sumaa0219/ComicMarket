@@ -2,7 +2,7 @@ import CircleFilterForm from "@/components/circleFilterForm";
 import Layout from "@/components/layout";
 import { getAllCircles, getAllItems, getUser, removeBuyer } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
-import { filterDeletedCircleItem } from "@/lib/utils";
+import { circleToDatePlaceString, filterDeletedCircleItem, getCircleById } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -31,8 +31,16 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 export default function Circle(props: ItemProps) {
   const [processing, setProcessing] = useState(false)
   const initialItems = props.items.filter(i => filterDeletedCircleItem(i, props.circles))
-  const [items, setItems] = useState<ItemWithID[]>(initialItems)
-  // const [circles, setCircles] = useState<CircleWithID[]>(props.circles)
+  const sortedItems = initialItems.sort((a, b) => {
+    const circles = {
+      a: getCircleById(a.circleId, props.circles),
+      b: getCircleById(b.circleId, props.circles)
+    }
+    return (circles.a && circles.b)
+      ? circleToDatePlaceString(circles.a).localeCompare(circleToDatePlaceString(circles.b))
+      : 0
+  })
+  const [items, setItems] = useState<ItemWithID[]>(sortedItems)
 
   return (<Layout title="ユーザー詳細">
     <Head>
@@ -78,7 +86,8 @@ export default function Circle(props: ItemProps) {
       <table className="table">
         <thead>
           <tr>
-            <th>サークル名</th>
+            <th>サークル</th>
+            <th>場所</th>
             <th>購入物</th>
             <th>個数</th>
             <th>単価</th>
@@ -104,12 +113,16 @@ export default function Circle(props: ItemProps) {
                         if (circle.deleted) {
                           circleName += "(削除済み)"
                         }
+                        // circleName += `(${circleToDatePlaceString(circle)})`
                         return circleName
                       } else {
                         return "サークルが見つかりません"
                       }
                     })()}
                   </Link>
+                </td>
+                <td>
+                  {circleToDatePlaceString(props.circles.find(c => c.id === item.circleId)!)}
                 </td>
                 <td>
                   <Link href={`/item/${item.id}`}>
