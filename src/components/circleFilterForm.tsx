@@ -16,7 +16,6 @@ export default function CircleFilterForm(props: CircleFilterFormProps) {
 
   const filterCircle = useCallback(() => {
     if (formRef.current) {
-      console.log({ selectedCircle })
       if (selectedCircle) {
         props.onChange?.([selectedCircle])
       } else {

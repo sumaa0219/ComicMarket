@@ -57,6 +57,9 @@ export function filterDeleted(circle: CircleWithID | CircleWithID[], enable: boo
   }
 }
 
+/**
+ * 削除済みサークルの購入物を除外
+ */
 export async function filterDeletedCircleItem(item: ItemWithID): Promise<boolean>
 export function filterDeletedCircleItem(item: ItemWithID, circle: CircleWithID | CircleWithID[]): boolean
 export function filterDeletedCircleItem(item: ItemWithID, circle?: CircleWithID | CircleWithID[]): Promise<boolean> | boolean {
@@ -75,10 +78,53 @@ export function filterDeletedCircleItem(item: ItemWithID, circle?: CircleWithID 
   }
 }
 
+/**
+ * サークルIDからサークル情報を取得
+ */
 export function getCircleById(id: CircleWithID["id"], circle: CircleWithID[]): CircleWithID | undefined {
   return circle.find(c => c.id === id)
 }
 
+/**
+ * サークル情報を日付と場所に変換
+ */
 export function circleToDatePlaceString(circle: CircleWithID): string {
   return `${circle.day}日目 ${circleWingToString(circle.wing)}${circle.place}`
+}
+
+/**
+ * サークルを日付と場所でソート
+ */
+export function sortCircleByDP(circles: CircleWithID[]): CircleWithID[] {
+  return circles.sort((a, b) => {
+    return (a && b)
+      ? circleToDatePlaceString(a).localeCompare(circleToDatePlaceString(b))
+      : 0
+  })
+}
+
+/**
+ * 購入物をサークルの日付と場所でソート
+ */
+export function sortItemByDP(items: ItemWithID[], circles: CircleWithID[]): ItemWithID[] {
+  return items.sort((a, b) => {
+    const circlesCompare = {
+      a: getCircleById(a.circleId, circles),
+      b: getCircleById(b.circleId, circles)
+    }
+    return (circlesCompare.a && circlesCompare.b)
+      ? circleToDatePlaceString(circlesCompare.a).localeCompare(circleToDatePlaceString(circlesCompare.b))
+      : 0
+  })
+}
+
+/**
+ * 
+ */
+export function filterItemsByCircles(items: ItemWithID[], circles: CircleWithID[]): ItemWithID[] {
+  return items.filter(i => circles.map(c => i.circleId === c.id).includes(true))
+  // return items.filter(i => {
+  //   const circle = getCircleById(i.circleId, circles)
+  //   return !!circle
+  // })
 }

@@ -11,30 +11,11 @@ export const circle = z.object({
 })
 /** サークル */
 export type Circle = z.infer<typeof circle>
-// export interface Circle {
-//   /** サークル名 */
-//   name: string;
-//   /** サークル出店日 */
-//   day: "1" | "2";
-//   /** 西とか東とか */
-//   wing: "west" | "east" | "south";
-//   /** 場所 */
-//   place: string;
-
-//   /** お品書き画像 */
-//   menuImagePath?: string;
-//   /** DB用 : 削除済み */
-//   deleted?: boolean;
-// }
 
 export const circleWithID = circle.extend({
   id: z.string().uuid().describe("サークルID"),
 })
 export type CircleWithID = z.infer<typeof circleWithID>
-// export interface CircleWithID extends Circle {
-//   id: string
-// }
-
 
 export const item = z.object({
   circleId: z.string().uuid().describe("サークルID"),

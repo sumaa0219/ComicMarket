@@ -6,6 +6,7 @@ import { getAllCircles, getAllItems } from "@/lib/db";
 import { auth } from "@/lib/firebase";
 import { CircleWithID, ItemWithID } from "@/lib/types";
 import { NextPageContext } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -26,6 +27,19 @@ export default function Add(props: AddProps) {
   const [item, setItem] = useState<ItemWithID | null>(null)
   const { user } = useAuth(auth)
   return (<Layout title="購入物追加" center>
+    <Head>
+      <title>
+        {
+          step === 1
+            ? "サークル | 購入物追加"
+            : step === 2
+              ? "購入物 | 購入物追加"
+              : step === 3
+                ? "完了 | 購入物追加"
+                : " | 購入物追加"
+        }
+      </title>
+    </Head>
     <div className="flex flex-col border rounded-lg border-gray-500 xl:w-1/3 p-12 mx-auto">
       {
         [

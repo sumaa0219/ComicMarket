@@ -75,7 +75,6 @@ export default function Circle(props: ItemProps) {
     <CircleFilterForm
       circles={props.circles}
       onChange={(_circle) => {
-        console.log(_circle.length)
         const circleIDs = _circle.map(c => c.id)
         const newItems = initialItems.filter(i => circleIDs.includes(i.circleId))
         setItems(newItems)
