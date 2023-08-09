@@ -1,6 +1,7 @@
 import Layout from "@/components/layout";
 import { getAllCircles, getAllItems, getUser, removeBuyer } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
+import { filterDeletedCircleItem } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -28,19 +29,19 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 
 export default function Circle(props: ItemProps) {
   const [processing, setProcessing] = useState(false)
-  const [items, setItems] = useState<ItemWithID[]>(props.items)
+  const [items, setItems] = useState<ItemWithID[]>(props.items.filter(i => filterDeletedCircleItem(i, props.circles)))
 
-  let totalPrice = 0
-  if (items.length === 0) {
-    totalPrice = 0
-  }
-  else {
-    let price = 0
-    items.map((item, i) => item.users.map((user, j) => (
-      price += Number(item.price) * Number(user.count)
-    )))
-    totalPrice = price
-  }
+  // let totalPrice = 0
+  // if (items.length === 0) {
+  //   totalPrice = 0
+  // }
+  // else {
+  //   let price = 0
+  //   items.map((item, i) => item.users.map((user, j) => (
+  //     price += Number(item.price) * Number(user.count)
+  //   )))
+  //   totalPrice = price
+  // }
 
   return (<Layout title="ユーザー詳細">
     <Head>
@@ -59,7 +60,13 @@ export default function Circle(props: ItemProps) {
     </div>
 
     <div className="mt-12">
-      合計金額:{totalPrice}円
+      合計金額:{
+        items.map(item => {
+          const { price } = item
+          const count = item.users.find(user => user.uid === props.user.id)?.count
+          return Number(price) * Number(count ?? 0)
+        }).reduce((a, b) => a + b, 0).toLocaleString()
+      }円
     </div>
 
     <div className="mt-12">
@@ -72,6 +79,8 @@ export default function Circle(props: ItemProps) {
             <th>サークル名</th>
             <th>購入物</th>
             <th>個数</th>
+            <th>単価</th>
+            <th>小計</th>
             <th>削除</th>
           </tr>
         </thead>
@@ -106,6 +115,8 @@ export default function Circle(props: ItemProps) {
                   </Link>
                 </td>
                 <td>{user.count}</td>
+                <td>{Number(item.price).toLocaleString()}</td>
+                <td>{(Number(item.price) * Number(user.count)).toLocaleString()}</td>
                 <td>
                   <button className="btn btn-outline btn-sm btn-square btn-ghost" onClick={e => {
                     e.preventDefault()

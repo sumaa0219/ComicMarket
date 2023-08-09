@@ -1,4 +1,5 @@
-import { CircleCondition, CircleWithID, circleCondition, circleWithID } from "./types"
+import { getCircle } from "./db"
+import { CircleCondition, CircleWithID, ItemWithID, circleCondition, circleWithID } from "./types"
 
 /**
  * サークルが検索条件にマッチするかどうかを判定
@@ -51,5 +52,23 @@ export function filterDeleted(circle: CircleWithID | CircleWithID[], enable: boo
     } else {
       return true
     }
+  }
+}
+
+export async function filterDeletedCircleItem(item: ItemWithID): Promise<boolean>
+export function filterDeletedCircleItem(item: ItemWithID, circle: CircleWithID | CircleWithID[]): boolean
+export function filterDeletedCircleItem(item: ItemWithID, circle?: CircleWithID | CircleWithID[]): Promise<boolean> | boolean {
+  if (Array.isArray(circle)) {
+    const cid = item.circleId
+    const c = circle.find(c => c.id === cid)
+    if (c) {
+      return filterDeletedCircleItem(item, c)
+    } else {
+      throw new Error(`circle not found: ${cid}`)
+    }
+  } else if (circle) {
+    return filterDeleted(circle)
+  } else {
+    return getCircle(item.circleId).then(c => filterDeleted(c))
   }
 }
