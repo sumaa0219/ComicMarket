@@ -12,6 +12,8 @@ const withPWA = require("next-pwa")({
 });
 const sentryWebpackPlugin = require("@sentry/webpack-plugin");
 
+const isProd = process.env.NODE_ENV === "production"
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -79,21 +81,14 @@ const sentryWebpackPluginOptions = {
   include: ".next",
 };
 
-/**
- * @param {import('@sentry/nextjs/types/config/types').NextConfigObjectWithSentry} config
- * @param {import('@sentry/nextjs').SentryWebpackPluginOptions} options
- */
-function passSentry(config, options) {
-  const { sentry: _sentry, ...configWithoutSentry } = config
-  return process.env.NODE_ENV === "production" ? withSentryConfig(config, options) : configWithoutSentry
-}
+const baConfig = withBundleAnalyzer(withPWA(nextConfig))
 
-module.exports = passSentry({
-  ...withBundleAnalyzer(withPWA(nextConfig)),
+module.exports = isProd ? withSentryConfig({
+  ...baConfig,
   sentry: {
     hideSourceMaps: true,
     widenClientFileUpload: true,
     disableLogger: true,
     tunnelRoute: "/monitoring",
   }
-}, sentryWebpackPluginOptions)
+}, sentryWebpackPluginOptions) : baConfig
