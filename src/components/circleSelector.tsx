@@ -1,4 +1,4 @@
-import { CircleWithID } from "@/lib/types";
+import { CircleCondition, CircleWithID } from "@/lib/types";
 import { circleWingToString, filterDeleted, isMatchCondition } from "@/lib/utils";
 import { createContext, useContext, useState, useRef, useEffect, Fragment, ReactNode, Dispatch, SetStateAction } from "react";
 
@@ -7,13 +7,6 @@ interface CircleSelectorComponentProps {
   onChange?: (circle: CircleWithID) => void;
 }
 interface CircleSelectorProps extends CircleSelectorComponentProps, Omit<React.DialogHTMLAttributes<HTMLButtonElement>, "onChange"> { }
-
-interface CircleSelectorFormData {
-  name: string;
-  place: string;
-  days: Record<"1" | "2", boolean>;
-  wings: Record<"west" | "east" | "south", boolean>;
-}
 
 const FormDataContext = createContext({
   data: {
@@ -27,17 +20,18 @@ const FormDataContext = createContext({
       west: true,
       east: true,
       south: true,
-    }
+    },
+    excludeDeleted: true,
   },
   setData: () => {}
 } as {
-  data: CircleSelectorFormData;
-  setData: Dispatch<SetStateAction<CircleSelectorFormData>>;
+  data: CircleCondition;
+  setData: Dispatch<SetStateAction<CircleCondition>>;
 })
 
 interface CircleSelectorFormProps {
   className?: string;
-  onDataChanged?: (data: CircleSelectorFormData) => void;
+  onDataChanged?: (data: CircleCondition) => void;
 }
 export function CircleSelectorForm(props: CircleSelectorFormProps) {
   const { setData } = useContext(FormDataContext);
@@ -112,7 +106,7 @@ export function CircleSelectorForm(props: CircleSelectorFormProps) {
 }
 
 export function CircleSelectorComponent(props: CircleSelectorComponentProps) {
-  const [formData, setFormData] = useState<CircleSelectorFormData>({
+  const [formData, setFormData] = useState<CircleCondition>({
     name: "",
     place: "",
     days: {
@@ -123,7 +117,8 @@ export function CircleSelectorComponent(props: CircleSelectorComponentProps) {
       west: true,
       east: true,
       south: true,
-    }
+    },
+    excludeDeleted: true,
   })
   const initialCircleData = props.circles
   const [circles, setCircles] = useState<CircleWithID[]>(filterDeleted(initialCircleData))

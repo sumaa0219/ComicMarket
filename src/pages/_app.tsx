@@ -3,9 +3,8 @@ import { Analytics } from '@vercel/analytics/react';
 import type { AppProps } from 'next/app';
 import NextNProgress from 'nextjs-progressbar';
 import { Fragment } from 'react';
-import Maintenance from './maintenance';
 
-function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }: AppProps) {
   return (
     <Fragment>
       <NextNProgress />
@@ -14,9 +13,3 @@ function App({ Component, pageProps }: AppProps) {
     </Fragment>
   )
 }
-
-// export default App
-
-export default process.env.NEXT_PUBLIC_MAINTENANCE_MODE?.toLowerCase() === 'true'
-? Maintenance
-: App
