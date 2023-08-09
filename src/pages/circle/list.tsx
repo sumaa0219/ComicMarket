@@ -23,6 +23,7 @@ ListCircle.getInitialProps = async (ctx: NextPageContext): Promise<ListCirclePro
 }
 
 export default function ListCircle(props: ListCircleProps) {
+  const [excludeDeleted, setExcludeDeleted] = useState(true)
   const [circles, setCircles] = useState<CircleWithID[]>(props.circles.sort((a, b) => a.name.localeCompare(b.name)))
   const formRef = useRef<HTMLFormElement>(null)
   const filterCircle = useCallback(()=>{
@@ -79,6 +80,13 @@ export default function ListCircle(props: ListCircleProps) {
           </label>
           <input type="text" id="circlePlace" placeholder="ま42b" className="input input-bordered" />
         </div>
+
+        <div className="ml-2 flex flex-row justify-center h-max my-auto">
+          <input type="checkbox" name="excludeDeleted" checked={excludeDeleted} onChange={e => setExcludeDeleted(e.currentTarget.checked)} className="checkbox" />
+          <label className="label" htmlFor="excludeDeleted" onClick={() => setExcludeDeleted(p => !p)}>
+            <span className="label-text">削除済みのサークルを無視する</span>
+          </label>
+        </div>
       </form>
 
       <div className="overflow-x-auto">
@@ -92,11 +100,14 @@ export default function ListCircle(props: ListCircleProps) {
             </tr>
           </thead>
           <tbody>
-            {filterDeleted(circles).map((c, i) => (
+            {
+            // filterDeleted(circles, excludeDeleted)
+            (excludeDeleted ? filterDeleted(circles) : circles)
+            .map((c, i) => (
               <tr className="" key={i}>
                 <td className="">
-                  <Link href={`/circle/${c.id}`} className="w-full">
-                    {c.name}
+                  <Link href={`/circle/${c.id}`} className={`w-full ${c.deleted && "text-neutral-500"}`}>
+                    { c.deleted ? `${c.name} (削除済み)` : c.name}
                   </Link>
                 </td>
                 <td>{c.day}日目</td>

@@ -41,11 +41,15 @@ export function circleWingToString(wing: "west" | "east" | "south") {
  * 削除済みサークルを除外
  */
 export function filterDeleted(circle: CircleWithID): boolean
-export function filterDeleted(circle: CircleWithID[]): CircleWithID[]
-export function filterDeleted(circle: CircleWithID | CircleWithID[]): boolean | CircleWithID[] {
+export function filterDeleted(circle: CircleWithID[], enable?: boolean): CircleWithID[]
+export function filterDeleted(circle: CircleWithID | CircleWithID[], enable: boolean | undefined = true): boolean | CircleWithID[] {
   if (Array.isArray(circle)) {
     return circle.filter(filterDeleted)
   } else {
-    return !circle.deleted
+    if (enable) {
+      return !circle.deleted
+    } else {
+      return true
+    }
   }
 }

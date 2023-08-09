@@ -5,7 +5,9 @@ import { Fragment } from 'react';
 import Maintenance from './maintenance';
 import { Analytics } from '@vercel/analytics/react';
 
-export default process.env.NEXT_PUBLIC_MAINTENANCE_MODE?.toLowerCase() === 'true' ? Maintenance : function App({ Component, pageProps }: AppProps) {
+export default /*process.env.NEXT_PUBLIC_MAINTENANCE_MODE?.toLowerCase() === 'true'
+? Maintenance
+:*/ function App({ Component, pageProps }: AppProps) {
   return (
     <Fragment>
       <NextNProgress />
