@@ -1,6 +1,6 @@
 import { addCircle, updateCircle, uploadImage } from "@/lib/db";
 import { Circle, CircleWithID } from "@/lib/types";
-import { circleWingToString } from "@/lib/utils";
+import { circleWingToString, filterDeleted } from "@/lib/utils";
 import { Fragment, useRef, useState } from "react";
 import CircleSelector from "../circleSelector";
 
@@ -103,8 +103,8 @@ export default function AddCircle(props: AddCircleProps) {
 
             // 重複するサークルがないか確認
             const duplicateCheck = {
-              name: props.circles.find(c => c.name === formData.name),
-              place: props.circles.find(c => c.place === formData.place && c.day === formData.day && c.wing === formData.wing),
+              name: props.circles.filter(filterDeleted).find(c => c.name === formData.name),
+              place: props.circles.filter(filterDeleted).find(c => c.place === formData.place && c.day === formData.day && c.wing === formData.wing),
             }
             if (duplicateCheck.name) {
               showWarn("同名のサークルが存在")
