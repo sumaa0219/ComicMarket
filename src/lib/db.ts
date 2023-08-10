@@ -91,10 +91,10 @@ export async function removeCircle(id: string) {
 /**
  * 購入物をDBに追加
  */
-export async function addItem(itemArg: Item): Promise<ItemWithID> {
+export async function addItem(itemArg: Item, idArg?: string): Promise<ItemWithID> {
   const pItem = item.parse(itemArg)
 
-  const id = uuidv4()
+  const id = idArg ?? uuidv4()
   const data = {
     deleted: false,
     ...pItem,

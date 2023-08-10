@@ -1,10 +1,13 @@
+import { DetailedHTMLProps, InputHTMLAttributes } from "react";
+
 interface PriorityProps {
   priority: number;
   onChange: (priority: number) => void;
-  name: string;
-  disabled?: boolean;
-  readonly?: boolean;
+  name: HTMLInputElement["name"];
+  disabled?: HTMLInputElement["disabled"];
+  readOnly?: HTMLInputElement["readOnly"];
 }
+
 export default function Priority(props: PriorityProps) {
   return (
     <div className="rating">
@@ -18,7 +21,7 @@ export default function Priority(props: PriorityProps) {
           name={props.name}
           onClick={() => props.onChange(currentPriority + 1)}
           disabled={props.disabled}
-          readOnly={props.readonly}
+          readOnly={props.readOnly}
         />
       ))}
     </div>

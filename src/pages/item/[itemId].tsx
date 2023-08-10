@@ -1,5 +1,7 @@
+import TrashIcon from "@/components/TrashIcon";
 import Layout from "@/components/layout";
-import { getAllUsers, getCircle, getItem, removeBuyer } from "@/lib/db";
+import Priority from "@/components/priority";
+import { getAllUsers, getCircle, getItem, removeBuyer, updatePriority } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
@@ -26,7 +28,9 @@ Item.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 export default function Item(props: ItemProps) {
   const [processing, setProcessing] = useState(false)
   const [item, setItem] = useState<ItemWithID>(props.item)
-  return (<Layout title="購入物詳細">
+  const [sending, setSending] = useState(false)
+
+return (<Layout title="購入物詳細">
     <Head>
       <title>{`${item.name} | 購入物詳細`}</title>
     </Head>
@@ -47,6 +51,7 @@ export default function Item(props: ItemProps) {
           <tr>
             <th>購入者</th>
             <th>個数</th>
+            <th>優先度</th>
             <th>削除</th>
           </tr>
         </thead>
@@ -61,6 +66,22 @@ export default function Item(props: ItemProps) {
                 </td>
                 <td>{user.count}</td>
                 <td>
+                  <Priority
+                    priority={user.priority}
+                    onChange={async priority => {
+                      setSending(true)
+                      await updatePriority(item.id, user.uid, priority)
+                      setItem(prevItem => {
+                        prevItem.users[i].priority = priority
+                        return prevItem
+                      })
+                      setSending(false)
+                    }}
+                    disabled={processing}
+                    name={`priority-${i}`}
+                  />
+                </td>
+                <td>
                   <button className="btn btn-outline btn-sm btn-square btn-ghost" onClick={e=>{
                     e.preventDefault()
                     setProcessing(true)
@@ -72,14 +93,7 @@ export default function Item(props: ItemProps) {
                       }))
                     })
                   }} disabled={processing}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#ff0000" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" />
-                      <line x1="4" y1="7" x2="20" y2="7" />
-                      <line x1="10" y1="11" x2="10" y2="17" />
-                      <line x1="14" y1="11" x2="14" y2="17" />
-                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                    </svg>
+                    <TrashIcon />
                   </button>
                 </td>
               </tr>
