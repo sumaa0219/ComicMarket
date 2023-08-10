@@ -64,12 +64,12 @@ export async function filterDeletedCircleItem(item: ItemWithID): Promise<boolean
 export function filterDeletedCircleItem(item: ItemWithID, circle: CircleWithID | CircleWithID[]): boolean
 export function filterDeletedCircleItem(item: ItemWithID, circle?: CircleWithID | CircleWithID[]): Promise<boolean> | boolean {
   if (Array.isArray(circle)) {
-    const cid = item.circleId
-    const c = circle.find(c => c.id === cid)
+    const c = circle.find(c => c.id === item.circleId)
     if (c) {
       return filterDeletedCircleItem(item, c)
     } else {
-      throw new Error(`circle not found: ${cid}`)
+      // console.warn(`circle not found: ${item.circleId}`)
+      return true
     }
   } else if (circle) {
     return filterDeleted(circle)

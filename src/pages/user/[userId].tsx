@@ -1,3 +1,4 @@
+import TrashIcon from "@/components/TrashIcon";
 import CircleFilterForm from "@/components/circleFilterForm";
 import Layout from "@/components/layout";
 import Priority from "@/components/priority";
@@ -8,6 +9,7 @@ import { NextPageContext } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface ItemProps {
@@ -21,17 +23,19 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
   /**
    * このユーザーが購入した購入物のみを取得する
    */
-  const items: ItemWithID[] = (await getAllItems()).filter(item => item.users.find(u => u.uid === userId))
+  // const items: ItemWithID[] = (await getAllItems()).filter(item => item.users.find(u => u.uid === userId))
   return {
     circles: await getAllCircles(),
     user: await getUser(userId),
-    items,
+    items: await getAllItems(),
   }
 }
 
 export default function Circle(props: ItemProps) {
   const [processing, setProcessing] = useState(false)
-  const initialItems = props.items.filter(i => filterDeletedCircleItem(i, props.circles))
+  const initialItems = props.items
+    .filter(i => filterDeletedCircleItem(i, props.circles))
+    .filter(item => item.users.find(u => u.uid === props.user.id))
   const [sortKey, setSortKey] = useState<"DP" | "priority-u" | "priority-d">("DP")
   const sortedItems = sortItemByDP(initialItems, props.circles)
   const [items, setItems] = useState<ItemWithID[]>(sortedItems)
@@ -100,6 +104,7 @@ export default function Circle(props: ItemProps) {
             <th>個数</th>
             <th>単価</th>
             <th>小計</th>
+            <th>購入者ID</th>
             <th>削除</th>
           </tr>
         </thead>
@@ -110,7 +115,7 @@ export default function Circle(props: ItemProps) {
                 データなし
               </td>
             </tr>
-            : items.map((item, i) => item.users.map((user, j) => (
+            : items.map((item, i) => item.users.map((user, j) => user.uid == props.user.id ? (
               <tr key={`${i}-${j}`}>
                 <td>
                   <Link href={`/circle/${item.circleId}`}>
@@ -154,6 +159,7 @@ export default function Circle(props: ItemProps) {
                 <td>{user.count}</td>
                 <td>{Number(item.price).toLocaleString()}</td>
                 <td>{(Number(item.price) * Number(user.count)).toLocaleString()}</td>
+                <td>{user.uid}</td>
                 <td>
                   <button className="btn btn-outline btn-sm btn-square btn-ghost" onClick={e => {
                     e.preventDefault()
@@ -166,18 +172,11 @@ export default function Circle(props: ItemProps) {
                       } : p))
                     })
                   }} disabled={processing}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#ff0000" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" />
-                      <line x1="4" y1="7" x2="20" y2="7" />
-                      <line x1="10" y1="11" x2="10" y2="17" />
-                      <line x1="14" y1="11" x2="14" y2="17" />
-                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                    </svg>
+                    <TrashIcon />
                   </button>
                 </td>
               </tr>
-            )))}
+            ) : null))}
         </tbody>
       </table>
     </div>
