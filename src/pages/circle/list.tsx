@@ -1,7 +1,7 @@
 import CircleFilterForm from "@/components/circleFilterForm"
 import Layout from "@/components/layout"
-import { getAllCircles } from "@/lib/db"
-import { CircleWithID, CircleCondition, circleCondition } from "@/lib/types"
+import { getAllCircles, getAllItems } from "@/lib/db"
+import { CircleWithID, CircleCondition, circleCondition, ItemWithID } from "@/lib/types"
 import { circleWingToString, filterDeleted, isMatchCondition, sortCircleByDP } from "@/lib/utils"
 import { Metadata, NextPageContext } from "next"
 import Head from "next/head"
@@ -13,13 +13,14 @@ export const metadata: Metadata = {
 }
 
 interface ListCircleProps {
-  circles: CircleWithID[]
+  circles: CircleWithID[];
+  items: ItemWithID[];
 }
 
 ListCircle.getInitialProps = async (ctx: NextPageContext): Promise<ListCircleProps> => {
-  const circles = await getAllCircles()
   return {
-    circles
+    circles: await getAllCircles(),
+    items: await getAllItems(),
   }
 }
 
@@ -47,22 +48,36 @@ export default function ListCircle(props: ListCircleProps) {
               <th>出店日</th>
               <th>出店棟</th>
               <th>出店場所</th>
+              <th>購入数</th>
             </tr>
           </thead>
           <tbody>
             {
-            circles.map((c, i) => (
-              <tr className="" key={i}>
-                <td className="">
-                  <Link href={`/circle/${c.id}`} className={`w-full ${c.deleted && "text-neutral-500"}`}>
-                    { c.deleted ? `${c.name} (削除済み)` : c.name}
-                  </Link>
-                </td>
-                <td>{c.day}日目</td>
-                <td>{circleWingToString(c.wing)}</td>
-                <td>{c.place}</td>
-              </tr>
-            ))}
+              circles.map((c, i) => (
+                <tr className="" key={i}>
+                  <td className="">
+                    <Link href={`/circle/${c.id}`} className={`w-full ${c.deleted && "text-neutral-500"}`}>
+                      {c.deleted ? `${c.name} (削除済み)` : c.name}
+                    </Link>
+                  </td>
+                  <td>{c.day}日目</td>
+                  <td>{circleWingToString(c.wing)}</td>
+                  <td>{c.place}</td>
+                  <td className="block">
+                    {(() => {
+                      const totalCount = props.items
+                        .filter(i => i.circleId === c.id)
+                        .map(i => i.users
+                          .map(u => u.count)
+                          .reduce((a, b) => a + b, 0)
+                        )
+                        .reduce((a, b) => a + b, 0)
+                      return totalCount
+                    })()
+                    }
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

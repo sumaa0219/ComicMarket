@@ -9,11 +9,11 @@ export default function App({ Component, pageProps }: AppProps) {
     <Fragment>
       <NextNProgress />
       <Component {...pageProps} />
-      {
+      {/* {
         global?.window?.location.hostname !== 'localhost' && (
           <Analytics />
         )
-      }
+      } */}
     </Fragment>
   )
 }

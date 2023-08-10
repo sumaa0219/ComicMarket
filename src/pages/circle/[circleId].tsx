@@ -81,6 +81,7 @@ export default function Circle(props: ItemProps) {
             <th>購入者</th>
             <th>購入物</th>
             <th>個数</th>
+            <th>優先度</th>
           </tr>
         </thead>
         <tbody>

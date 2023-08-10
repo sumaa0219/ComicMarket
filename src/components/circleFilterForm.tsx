@@ -20,8 +20,8 @@ export default function CircleFilterForm(props: CircleFilterFormProps) {
         props.onChange?.([selectedCircle])
       } else {
         const condition = circleCondition.parse({
-          name: formRef.current.circleName.value,
-          place: formRef.current.circlePlace.value,
+          name: formRef.current.circleName[1].value,
+          place: formRef.current.circlePlace[1].value,
           days: Object.fromEntries(Array.from<HTMLInputElement>(formRef.current.circleDay).map(d => [d.value, d.checked])),
           wings: Object.fromEntries(Array.from<HTMLInputElement>(formRef.current.circleWing).map(d => [d.value, d.checked])),
           excludeDeleted: (formRef.current.excludeDeleted as HTMLInputElement).checked

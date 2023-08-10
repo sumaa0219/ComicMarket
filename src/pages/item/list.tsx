@@ -76,8 +76,8 @@ export default function ItemList(props: ItemListProps) {
                     {item.price}円
                   </td>
                   <td className="">
-                    {item.users.map((user, i) => (
-                      <Link href={`/user/${user.uid}`} key={i} className="after:content-[','] mr-2">
+                    {item.users.map((user, index, allUsers) => (
+                      <Link href={`/user/${user.uid}`} key={index} className={`${allUsers.length - 1 !== index && `after:content-[',']`} mr-2`}>
                         {props.users.find(u => u.id === user.uid)?.name}
                       </Link>
                     ))}
