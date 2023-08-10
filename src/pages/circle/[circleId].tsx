@@ -1,5 +1,6 @@
 import Layout from "@/components/layout";
-import { getAllItems, getAllUsers, getCircle, getURL, removeCircle } from "@/lib/db";
+import Priority from "@/components/priority";
+import { getAllItems, getAllUsers, getCircle, getURL, removeCircle, updatePriority } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
@@ -7,7 +8,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment, useRef } from "react";
+import { Fragment, useRef, useState } from "react";
 
 
 interface ItemProps {
@@ -33,6 +34,8 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 export default function Circle(props: ItemProps) {
   const router = useRouter()
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const [items, setItems] = useState<ItemWithID[]>(props.items)
+  const [sending, setSending] = useState(false)
 
   return (<Layout title="サークル詳細">
     <Head>
@@ -85,13 +88,13 @@ export default function Circle(props: ItemProps) {
           </tr>
         </thead>
         <tbody>
-          {props.items.length === 0
+          {items.length === 0
             ? <tr>
               <td>
                 No data found
               </td>
             </tr>
-            : props.items.map((item, i) => item.users.map((user, j) => (
+            : items.map((item, i) => item.users.map((user, j) => (
               <tr key={`${i}-${j}`}>
                 <td>
                   <Link href={`/user/${user.uid}`}>
@@ -104,6 +107,21 @@ export default function Circle(props: ItemProps) {
                   </Link>
                 </td>
                 <td>{user.count}</td>
+                <td>
+                  <Priority
+                    name={`item-${i}_user-${j}`}
+                    priority={user.priority}
+                    onChange={async (priority) => {
+                      setSending(true)
+                      await updatePriority(item.id, user.uid, priority)
+                      setItems(prevItems => {
+                        prevItems[i].users[j].priority = priority
+                        return prevItems
+                      })
+                      setSending(false)
+                    }}
+                  />
+                </td>
               </tr>
             )))}
         </tbody>

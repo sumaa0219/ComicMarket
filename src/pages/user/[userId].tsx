@@ -1,6 +1,7 @@
 import CircleFilterForm from "@/components/circleFilterForm";
 import Layout from "@/components/layout";
-import { getAllCircles, getAllItems, getUser, removeBuyer } from "@/lib/db";
+import Priority from "@/components/priority";
+import { getAllCircles, getAllItems, getUser, removeBuyer, updatePriority } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleToDatePlaceString, filterDeletedCircleItem, getCircleById, sortItemByDP, sortItemByPriority } from "@/lib/utils";
 import { NextPageContext } from "next";
@@ -34,6 +35,8 @@ export default function Circle(props: ItemProps) {
   const [sortKey, setSortKey] = useState<"DP" | "priority-u" | "priority-d">("DP")
   const sortedItems = sortItemByDP(initialItems, props.circles)
   const [items, setItems] = useState<ItemWithID[]>(sortedItems)
+  const [sending, setSending] = useState(false)
+
   useEffect(() => {
     console.log("sortKey", sortKey)
     setItems(i =>
@@ -133,25 +136,21 @@ export default function Circle(props: ItemProps) {
                     {item.name}
                   </Link>
                 </td>
-                <td>{(() => {
-                  const priority = item.users.find(u => u.uid === props.user.id)?.priority
-                  if (priority) {
-                    return (
-                      <div className="rating">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <input
-                            key={`${item.id}-${user.uid}-${i}`}
-                            type="radio"
-                            className="mask bg-primary dark:bg-orange-400 mask-star"
-                            value={i}
-                            defaultChecked={i === priority}
-                            readOnly
-                          />
-                        ))}
-                      </div>
-                    )
-                  }
-                })()}</td>
+                <td>
+                  <Priority
+                    priority={user.priority}
+                    onChange={async (priority) => {
+                      setSending(true)
+                      await updatePriority(item.id, user.uid, priority)
+                      setItems(prevItems => {
+                        prevItems[i].users[j].priority = priority
+                        return prevItems
+                      })
+                      setSending(false)
+                    }}
+                    name={`item-${i}_user-${j}`}
+                  />
+                </td>
                 <td>{user.count}</td>
                 <td>{Number(item.price).toLocaleString()}</td>
                 <td>{(Number(item.price) * Number(user.count)).toLocaleString()}</td>

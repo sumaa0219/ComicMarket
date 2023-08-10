@@ -11,6 +11,7 @@ import { getDownloadURL, ref as _ref, uploadBytes, FirebaseStorage } from "fireb
 import { v4 as uuidv4 } from "uuid";
 import { firestore, storage } from "./firebase";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID, circle, circleWithID, item, itemWithID } from "./types";
+import { z } from "zod";
 
 function isDev() {
   return false
@@ -135,6 +136,18 @@ export async function removeBuyer(itemId: string, uid: string) {
     ...itemData,
     id: itemId,
   }
+}
+
+export async function updatePriority(itemId: ItemWithID["id"], userId: string, priorityArg: Item["users"][0]["priority"]) {
+  const priority = z.number().min(1).max(5).parse(priorityArg)
+  const itemRef = doc(firestore, "items", itemId)
+  const itemDoc = await getDoc(itemRef)
+  const itemData = item.parse(itemDoc.data())
+  itemData.users = itemData.users.map(user => user.uid === userId ? {
+    ...user,
+    priority,
+  } : user)
+  await setDoc(itemRef, itemData)
 }
 
 /**
