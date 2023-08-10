@@ -35,7 +35,6 @@ interface CircleSelectorFormProps {
 }
 export function CircleSelectorForm(props: CircleSelectorFormProps) {
   const { setData } = useContext(FormDataContext);
-  // const formRef = useRef<HTMLDivElement>(null)
 
   return (
     <div className={`flex flex-col ${props.className}`}>

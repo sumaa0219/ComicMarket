@@ -13,15 +13,17 @@ interface CircleFilterFormProps {
 export default function CircleFilterForm(props: CircleFilterFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const [selectedCircle, setSelectedCircle] = useState<null | CircleWithID>(null)
+  const circleNameRef = useRef<HTMLInputElement>(null)
+  const circlePlaceRef = useRef<HTMLInputElement>(null)
 
   const filterCircle = useCallback(() => {
-    if (formRef.current) {
+    if (formRef.current && circleNameRef.current && circlePlaceRef.current) {
       if (selectedCircle) {
         props.onChange?.([selectedCircle])
       } else {
         const condition = circleCondition.parse({
-          name: formRef.current.circleName[1].value,
-          place: formRef.current.circlePlace[1].value,
+          name: circleNameRef.current.value,
+          place: circlePlaceRef.current.value,
           days: Object.fromEntries(Array.from<HTMLInputElement>(formRef.current.circleDay).map(d => [d.value, d.checked])),
           wings: Object.fromEntries(Array.from<HTMLInputElement>(formRef.current.circleWing).map(d => [d.value, d.checked])),
           excludeDeleted: (formRef.current.excludeDeleted as HTMLInputElement).checked
@@ -63,7 +65,7 @@ export default function CircleFilterForm(props: CircleFilterFormProps) {
         <label className="label" htmlFor="circleName">
           <span className="label-text">サークル名</span>
         </label>
-        <input type="text" id="circleName" placeholder="上海アリス幻樂団" className="input input-bordered" />
+        <input type="text" id="circleName" placeholder="上海アリス幻樂団" className="input input-bordered" ref={circleNameRef} />
       </div>
 
       <div className="ml-2">
@@ -91,7 +93,7 @@ export default function CircleFilterForm(props: CircleFilterFormProps) {
         <label className="label" htmlFor="circlePlace">
           <span className="label-text">出店場所</span>
         </label>
-        <input type="text" id="circlePlace" placeholder="ま42b" className="input input-bordered" />
+        <input type="text" id="circlePlace" placeholder="ま42b" className="input input-bordered" ref={circlePlaceRef} />
       </div>
 
       <div className="ml-2 flex flex-row justify-center my-auto">
