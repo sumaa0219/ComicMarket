@@ -138,7 +138,7 @@ export function CircleSelectorComponent(props: CircleSelectorComponentProps) {
         {circles.length > 0 ? circles.map((c, i) => (
           <li
             className="flex flex-row mt-2 rounded-lg hover:bg-neutral-focus active:bg-neutral transition-[background-color] p-2 cursor-pointer select-none"
-            onPointerDown={() => {
+            onClick={() => {
               props.onChange?.(c)
             }}
             key={i}
