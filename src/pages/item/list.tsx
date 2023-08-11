@@ -3,7 +3,7 @@ import Layout from "@/components/layout";
 import Priority from "@/components/priority";
 import { getAllCircles, getAllItems, getAllUsers } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
-import { circleToDatePlaceString, filterItemsByCircles, getCircleById, sortItemByDP } from "@/lib/utils";
+import { circleToDatePlaceString, filterItemsByCircles, sortItemByDP } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -89,7 +89,7 @@ export default function ItemList(props: ItemListProps) {
                     {highestPriority && <Priority
                       priority={highestPriority}
                       name={`${item.id}-${i}`}
-                      readOnly
+                      readOnly disabled
                     />}
                   </td>
                 </tr>
