@@ -1,7 +1,7 @@
 import Layout from "@/components/layout";
 import Priority from "@/components/priority";
-import { getAllItems, getAllUsers, getCircle, getURL, removeCircle, updatePriority } from "@/lib/db";
-import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
+import { addCircle, getAllItems, getAllUsers, getCircle, getURL, removeCircle, updateCircle, updatePriority } from "@/lib/db";
+import { CircleWithID, ItemWithID, UserdataWithID, circleWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
 import Head from "next/head";
@@ -32,20 +32,96 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
 }
 
 export default function Circle(props: ItemProps) {
+  const [circle, setCircle] = useState(props.circle)
   const router = useRouter()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [items, setItems] = useState<ItemWithID[]>(props.items)
   const [sending, setSending] = useState(false)
+  const circleEditDialogRef = useRef<HTMLDialogElement>(null)
 
   return (<Layout title="サークル詳細">
     <Head>
-      <title>{`${props.circle.name} | サークル詳細`}</title>
+      <title>{`${circle.name} | サークル詳細`}</title>
     </Head>
     <div className="flex flex-row">
       <div className="w-1/4 flex flex-col justify-center items-center">
-        <div className="text-4xl">{props.circle.name}</div>
-        <div className="text-2xl">{props.circle.day}日目</div>
-        <div className="text-xl">{circleWingToString(props.circle.wing)}{props.circle.place}</div>
+        <input
+          type="text"
+          className="input text-4xl text-center"
+          defaultValue={circle.name}
+          onChange={e => {
+            const { value } = e.currentTarget
+            const newCircle = { ...circle, name: value }
+            setCircle(newCircle)
+            updateCircle(newCircle, circle.id)
+          }}
+        />
+        <button className="text-2xl" onClick={() => circleEditDialogRef?.current?.showModal()}>
+          {circle.day}日目
+        </button>
+        <button className="text-xl" onClick={() => circleEditDialogRef?.current?.showModal()}>
+          {circleWingToString(circle.wing)}{circle.place}
+        </button>
+        <dialog id="circleEditDialogRef" className="modal" ref={circleEditDialogRef}>
+          <form method="dialog" className="modal-box flex flex-col gap-4">
+            <h3 className="font-bold text-lg">サークル編集</h3>
+            {/* <p className="py-4">Press ESC key or click the button below to close</p> */}
+            <div className="join">
+              {
+                [
+                  ["1", "1日目"],
+                  ["2", "2日目"],
+                ].map(([value, label]) => (
+                  <input
+                    key={value}
+                    className="join-item btn"
+                    type="radio"
+                    name="circleDayChangeForm"
+                    aria-label={label}
+                    value={value}
+                    required
+                    defaultChecked={circle.day === value}
+                    onClick={e => {
+                      const { value } = e.currentTarget
+                      const newCircle = circleWithID.parse({ ...circle, day: value })
+                      setCircle(newCircle)
+                      updateCircle(newCircle, circle.id)
+                    }}
+                    />
+                ))
+              }
+            </div>
+            <div className="join">
+              {
+                [
+                  ["west", "西"],
+                  ["east", "東"],
+                  ["south", "南"],
+                ].map(([value, label]) => (
+                  <input
+                    key={value}
+                    className="join-item btn"
+                    type="radio"
+                    name="circleWingChangeForm"
+                    aria-label={label}
+                    value={value}
+                    required
+                    defaultChecked={circle.wing === value}
+                    onClick={e => {
+                      const { value } = e.currentTarget
+                      const newCircle = circleWithID.parse({ ...circle, wing: value })
+                      setCircle(newCircle)
+                      updateCircle(newCircle, circle.id)
+                    }}
+                  />
+                ))
+              }
+            </div>
+            <div className="modal-action">
+              <button className="btn">閉じる</button>
+            </div>
+          </form>
+        </dialog>
       </div>
 
       {
@@ -73,7 +149,7 @@ export default function Circle(props: ItemProps) {
 
     <button className="btn btn-primary" onClick={e => {
       e.preventDefault()
-      removeCircle(props.circle.id)
+      removeCircle(circle.id)
       router.push(`/circle/list`)
     }}>サークル削除</button>
 
