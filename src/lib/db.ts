@@ -5,7 +5,9 @@ import {
   doc as _doc,
   getDoc,
   getDocs,
-  setDoc
+  query,
+  setDoc,
+  where
 } from "firebase/firestore";
 import { getDownloadURL, ref as _ref, uploadBytes, FirebaseStorage } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
@@ -153,12 +155,20 @@ export async function updatePriority(itemId: ItemWithID["id"], userId: string, p
 /**
  * 全ての購入物情報を取得
  */
-export async function getAllItems(): Promise<ItemWithID[]> {
-  const data: ItemWithID[] = (await getDocs(collection(firestore, "items"))).docs.map(doc => ({
-    ...(doc.data() as Item),
-    id: doc.id,
-  }))
-  return data
+export async function getAllItems(circleId?: Item["circleId"]): Promise<ItemWithID[]> {
+  if (circleId) {
+    const data: ItemWithID[] = (await getDocs(query(collection(firestore, "items"), where("circleId", "==", circleId)))).docs.map(doc => ({
+      ...(doc.data() as Item),
+      id: doc.id,
+    }))
+    return data
+  } else {
+    const data: ItemWithID[] = (await getDocs(collection(firestore, "items"))).docs.map(doc => ({
+      ...(doc.data() as Item),
+      id: doc.id,
+    }))
+    return data
+  }
 }
 
 /**

@@ -12,13 +12,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-interface ItemProps {
+interface UserProps {
   circles: CircleWithID[];
   user: UserdataWithID;
   items: ItemWithID[];
 }
 
-Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
+User.getInitialProps = async (ctx: NextPageContext): Promise<UserProps> => {
   const { userId } = ctx.query as { userId: string }
   /**
    * このユーザーが購入した購入物のみを取得する
@@ -31,11 +31,27 @@ Circle.getInitialProps = async (ctx: NextPageContext): Promise<ItemProps> => {
   }
 }
 
-export default function Circle(props: ItemProps) {
+type my_item = Omit<ItemWithID, "users"> & {
+  user: ItemWithID["users"][0]
+}
+
+export default function User(props: UserProps) {
   const [processing, setProcessing] = useState(false)
   const initialItems = props.items
     .filter(i => filterDeletedCircleItem(i, props.circles))
     .filter(item => item.users.find(u => u.uid === props.user.id))
+  const myItems = (
+    initialItems.map(item => {
+      const { users, ...oItem } = item
+      const user = users.find(u => u.uid === props.user.id)
+      if (user) {
+        return {
+          ...oItem,
+          user
+        }
+      }
+    }).filter((i): i is my_item => typeof i !== "undefined")
+  )
   const [sortKey, setSortKey] = useState<"DP" | "priority-u" | "priority-d">("DP")
   const sortedItems = sortItemByDP(initialItems, props.circles)
   const [items, setItems] = useState<ItemWithID[]>(sortedItems)
@@ -46,7 +62,7 @@ export default function Circle(props: ItemProps) {
     setItems(i =>
       sortKey === "DP"
         ? sortItemByDP(i, props.circles)
-        : sortItemByPriority(i, props.user.id, sortKey==="priority-u")
+        : sortItemByPriority(i, props.user.id, sortKey === "priority-u")
     )
   }, [props.circles, props.user.id, sortKey])
 
@@ -94,7 +110,7 @@ export default function Circle(props: ItemProps) {
         <thead>
           <tr>
             <th>サークル</th>
-            <th className="btn btn-sm" onClick={()=>{
+            <th className="btn btn-sm" onClick={() => {
               setSortKey("DP")
             }}>場所</th>
             <th>購入物</th>

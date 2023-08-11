@@ -2,6 +2,7 @@ import { FirebaseOptions, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage, ref } from "firebase/storage";
+import { getPerformance } from "firebase/performance";
 
 export const firebaseConfig: FirebaseOptions = {
     apiKey: "AIzaSyBSs5JZCLyQKUVH_mtng2xln4E3NwmhyFw",
@@ -19,3 +20,4 @@ export const firestore = getFirestore(firebaseApp)
 export const auth = getAuth(firebaseApp)
 export const storage = getStorage(firebaseApp)
 export const storageRef = ref(storage);
+export const performance = global?.window ? getPerformance(firebaseApp) : null
