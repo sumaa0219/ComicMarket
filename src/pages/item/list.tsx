@@ -1,5 +1,6 @@
 import CircleFilterForm from "@/components/circleFilterForm";
 import Layout from "@/components/layout";
+import Priority from "@/components/priority";
 import { getAllCircles, getAllItems, getAllUsers } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleToDatePlaceString, filterItemsByCircles, getCircleById, sortItemByDP } from "@/lib/utils";
@@ -49,11 +50,13 @@ export default function ItemList(props: ItemListProps) {
               <th>購入物名</th>
               <th>単価</th>
               <th>購入者</th>
+              <th>最高優先度</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item, i) => {
               const circle = props.circles.find(c => c.id === item.circleId)
+              const highestPriority = item.users.map(u => u.priority).sort((a, b) => b - a)[0]
               if (circle == null) return <tr key={`${item.id}-${i}`}>
                 <td>サークルが見つかりません</td>
               </tr>
@@ -81,6 +84,13 @@ export default function ItemList(props: ItemListProps) {
                         {props.users.find(u => u.id === user.uid)?.name}
                       </Link>
                     ))}
+                  </td>
+                  <td>
+                    {highestPriority && <Priority
+                      priority={highestPriority}
+                      name={`${item.id}-${i}`}
+                      readOnly
+                    />}
                   </td>
                 </tr>
               )

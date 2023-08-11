@@ -1,8 +1,7 @@
-import { DetailedHTMLProps, InputHTMLAttributes } from "react";
 
 interface PriorityProps {
   priority: number;
-  onChange: (priority: number) => void;
+  onChange?: (priority: number) => void;
   name: HTMLInputElement["name"];
   disabled?: HTMLInputElement["disabled"];
   readOnly?: HTMLInputElement["readOnly"];
@@ -19,7 +18,7 @@ export default function Priority(props: PriorityProps) {
           value={currentPriority + 1}
           defaultChecked={currentPriority + 1 === props.priority}
           name={props.name}
-          onClick={() => props.onChange(currentPriority + 1)}
+          onClick={() => props.onChange?.(currentPriority + 1)}
           disabled={props.disabled}
           readOnly={props.readOnly}
         />
