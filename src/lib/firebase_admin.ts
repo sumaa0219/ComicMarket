@@ -26,7 +26,8 @@ const credential = serviceAccount.parse(
 
 export const adminApp = admin.apps.length === 0
   ? admin.initializeApp({
-    credential: admin.credential.cert(credential)
+    credential: admin.credential.cert(credential),
+    projectId: credential.projectId
   })
   : admin.app();
 export const firestore = admin.firestore(adminApp)
