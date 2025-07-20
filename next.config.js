@@ -1,18 +1,28 @@
+const million = require('million/compiler');
 //@ts-check
 
+const isProd = process.env.NODE_ENV === "production"
+
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.NODE_ENV === "production",
+  enabled: isProd,
   openAnalyzer: false
 })
-const { withSentryConfig } = require("@sentry/nextjs");
 const withPWA = require("next-pwa")({
   dest: 'public',
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development'
+  disable: !isProd
 });
-const sentryWebpackPlugin = require("@sentry/webpack-plugin");
+const { withSentryConfig } = require("@sentry/nextjs");
 
-const isProd = process.env.NODE_ENV === "production"
+/**
+ * @param {string} name
+ * @returns {string}
+ */
+function env(name) {
+  const value = process.env[name]
+  if (!value) throw new Error(`Missing env var ${name}`)
+  return value
+}
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -33,62 +43,76 @@ const nextConfig = {
       },
     ],
   },
-  webpack(
-    /**
-     * @type {import('webpack').Configuration}
-     */
-    config,
-    { isServer }
-  ) {
-    if (config.plugins instanceof Array && process.env.NODE_ENV === 'production') {
-      config.plugins.push(
-        new sentryWebpackPlugin({
-          org: "cabbagelettuce916",
-          project: "comicmarket",
+  // webpack(
+  //   /**
+  //    * @type {import('webpack').Configuration}
+  //    */
+  //   config,
+  //   { isServer }
+  // ) {
+  //   if (config.plugins instanceof Array && process.env.NODE_ENV === 'production') {
+  //     config.plugins.push(
+  //       sentryWebpackPlugin({
+  //         org: env("SENTRY_ORG"),
+  //         project: env("SENTRY_PROJECT"),
 
-          // Auth tokens can be obtained from https://sentry.io/settings/account/api/auth-tokens/
-          // and need `project:releases` and `org:read` scopes
-          authToken: process.env.SENTRY_AUTH_TOKEN,
-          include: '.next',
-        }),
-      )
-    }
-    return config
-  }
+  //         // Auth tokens can be obtained from https://sentry.io/settings/account/api/auth-tokens/
+  //         // and need `project:releases` and `org:read` scopes
+  //         authToken: env("SENTRY_AUTH_TOKEN"),
+  //         // include: '.next',
+  //       }),
+  //     )
+  //   }
+  //   return config
+  // }
 }
 
-/**
- * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
- */
-const sentryWebpackPluginOptions = {
-  // Additional config options for the Sentry Webpack plugin. Keep in mind that
-  // the following options are set automatically, and overriding them is not
-  // recommended:
-  //   release, url, configFile, stripPrefix, urlPrefix, include, ignore
-
-  org: "cabbagelettuce916",
-  project: "comicmarket",
-
-  // An auth token is required for uploading source maps.
-  // You can get an auth token from https://sentry.io/settings/account/api/auth-tokens/
-  // The token must have `project:releases` and `org:read` scopes for uploading source maps
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-
-  silent: true, // Suppresses all logs
-
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options.
-  include: ".next",
-};
-
+// @ts-ignore
 const baConfig = withBundleAnalyzer(withPWA(nextConfig))
 
-module.exports = isProd ? withSentryConfig({
-  ...baConfig,
-  sentry: {
-    hideSourceMaps: true,
-    widenClientFileUpload: true,
-    disableLogger: true,
-    tunnelRoute: "/monitoring",
+module.exports = million.next(
+  isProd ? withSentryConfig(
+    nextConfig,
+    // baConfig,
+    {
+      // For all available options, see:
+      // https://github.com/getsentry/sentry-webpack-plugin#options
+
+      // Suppresses source map uploading logs during build
+      silent: true,
+      org: env("SENTRY_ORG"),
+      project: env("SENTRY_PROJECT"),
+      authToken: env("SENTRY_AUTH_TOKEN"),
+    },
+    {
+      // For all available options, see:
+      // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+
+      // Upload a larger set of source maps for prettier stack traces (increases build time)
+      widenClientFileUpload: true,
+
+      // Transpiles SDK to be compatible with IE11 (increases bundle size)
+      transpileClientSDK: true,
+
+      // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+      tunnelRoute: "/monitoring",
+
+      // Hides source maps from generated client bundles
+      hideSourceMaps: true,
+
+      // Automatically tree-shake Sentry logger statements to reduce bundle size
+      disableLogger: true,
+
+      // Enables automatic instrumentation of Vercel Cron Monitors.
+      // See the following for more information:
+      // https://docs.sentry.io/product/crons/
+      // https://vercel.com/docs/cron-jobs
+      automaticVercelMonitors: true,
+    }
+  ) : baConfig,
+  {
+    mode: "vdom",
+    // auto: true,
+    // mute: true,
   }
-}, sentryWebpackPluginOptions) : baConfig
+);

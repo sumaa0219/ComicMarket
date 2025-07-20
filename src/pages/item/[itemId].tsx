@@ -1,7 +1,7 @@
 import TrashIcon from "@/components/TrashIcon";
 import Layout from "@/components/layout";
 import Priority from "@/components/priority";
-import { getAllUsers, getCircle, getItem, removeBuyer, updatePriority } from "@/lib/db";
+import { getAllUsers, getCircle, getItem, removeBuyer, updateItem, updatePriority } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
@@ -30,20 +30,56 @@ export default function Item(props: ItemProps) {
   const [item, setItem] = useState<ItemWithID>(props.item)
   const [sending, setSending] = useState(false)
 
-return (<Layout title="購入物詳細">
+  const [itemNameUpdating, setItemNameUpdating] = useState(false)
+  const [newItemName, setNewItemName] = useState("")
+
+  return (<Layout title="購入物詳細">
     <Head>
       <title>{`${item.name} | 購入物詳細`}</title>
     </Head>
-    <div className="flex flex-col">
+    <form className="flex flex-col">
       <div className="flex flex-row">
-        <div className="text-3xl">{item.name}</div>
+        {/* <div className="text-3xl">{item.name}</div> */}
+        <div className="join min-w-72 max-w-96 ">
+          {/* <input className="input input-bordered join-item" placeholder="Email" /> */}
+          <input
+            type="text"
+            name="itemName"
+            defaultValue={item.name}
+            className="input text-3xl join-item w-full"
+            onChange={e => setNewItemName(e.target.value)}
+            disabled={itemNameUpdating}
+          />
+          {(newItemName !== "" && newItemName !== item.name) ? <button
+            className="btn join-item"
+            disabled={itemNameUpdating}
+            onClick={e => {
+              e.preventDefault()
+              if (newItemName === item.name) return
+              else if (newItemName === "") return
+              else {
+                (async () => {
+                  setItemNameUpdating(true)
+                  setItem(prev => ({ ...prev, name: newItemName }))
+                  await updateItem({
+                    ...item,
+                    name: newItemName
+                  }, item.id)
+                  setItemNameUpdating(false)
+                })()
+              }
+            }}
+          >
+            {itemNameUpdating ? "更新中..." : "更新"}
+          </button> : null}
+        </div>
         <div className="text-2xl ml-4 flex items-end">{item.price}円</div>
       </div>
       <Link className="flex flex-row mt-4" href={`/circle/${props.circle.id}`}>
         <div className="text-xl">{props.circle.name}</div>
         <div className="text-xl ml-4">{props.circle.day}日目 {circleWingToString(props.circle.wing)} {props.circle.place}</div>
       </Link>
-    </div>
+    </form>
 
     <div className="w-96 overflow-x-auto">
       <table className="table">
@@ -82,10 +118,10 @@ return (<Layout title="購入物詳細">
                   />
                 </td>
                 <td>
-                  <button className="btn btn-outline btn-sm btn-square btn-ghost" onClick={e=>{
+                  <button className="btn btn-outline btn-sm btn-square btn-ghost" onClick={e => {
                     e.preventDefault()
                     setProcessing(true)
-                    removeBuyer(item.id, user.uid).then(()=>{
+                    removeBuyer(item.id, user.uid).then(() => {
                       setProcessing(false)
                       setItem(prev => ({
                         ...prev,

@@ -2,17 +2,19 @@ import { useAuth } from "@/hooks/auth";
 import { addBuyer, addItem } from "@/lib/db";
 import { auth } from "@/lib/firebase";
 import { CircleWithID, ItemWithID } from "@/lib/types";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useContext, useRef, useState } from "react";
 import ItemSelector from "../itemSelector";
+import { CircleItemContext } from "./contexts";
 
 interface AddItemProps {
-  items?: ItemWithID[];
+  // items?: ItemWithID[];
   circle?: CircleWithID | null;
   disabled?: boolean;
   onAdd?: (item: ItemWithID) => void;
 }
 export default function AddItem(props: AddItemProps) {
   const { user } = useAuth(auth)
+  const { items, addNewItem } = useContext(CircleItemContext)
   const [item, setItem] = useState<ItemWithID | null>(null)
   const newItemFormRef = useRef<HTMLFormElement>(null)
   const addFormRef = useRef<HTMLFormElement>(null)
@@ -28,7 +30,7 @@ export default function AddItem(props: AddItemProps) {
     e.preventDefault()
   }
 
-  return props.items && props.circle && (
+  return items && props.circle && (
     <Fragment>
       {
         item
@@ -41,7 +43,7 @@ export default function AddItem(props: AddItemProps) {
             </div>
             <button className="btn mb-2" onClick={() => { setItem(null) }} disabled={sending}>選択解除</button>
           </div>
-          : <ItemSelector items={props.items.filter(item => item.circleId === props.circle?.id)} onChange={item => {
+          : <ItemSelector items={items.filter(item => item.circleId === props.circle?.id)} onChange={item => {
             setItem(item)
           }} />
       }
@@ -58,9 +60,9 @@ export default function AddItem(props: AddItemProps) {
               <span className="label-text">購入物名</span>
               <span className="label-text">
                 表記ゆれがある場合は、一番簡潔かつ判別できる表記を使用してください。<br />
-                例 : 
+                例 :
                 <ul className="list-disc ml-4">
-                  <li>C102新刊セット → 新刊セット</li>
+                  <li>C104新刊セット → 新刊セット</li>
                 </ul>
                 また、入力前に上のボタンから既に登録された購入物がないかご確認ください。
               </span>
@@ -90,7 +92,7 @@ export default function AddItem(props: AddItemProps) {
           <Fragment>
             <div className="divider"></div>
             <div className="alert alert-warning">
-              以前にこの購入物を登録しています : {item.users.find(u => u.uid === user?.uid)?.count}個<br/>
+              以前にこの購入物を登録しています : {item.users.find(u => u.uid === user?.uid)?.count}個<br />
               このまま登録を続ければ、以前の登録は上書きされます。
             </div>
           </Fragment>
@@ -145,7 +147,8 @@ export default function AddItem(props: AddItemProps) {
                 price: newItem.price,
                 circleId: props.circle.id,
                 users: [buyData]
-              })
+              }) as ItemWithID
+              addNewItem(addedItem)
             }
             props.onAdd?.(addedItem)
           }

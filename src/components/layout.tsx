@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { HTMLAttributes, useEffect } from "react";
 import HumbergerIcon from "./HumbergerIcon";
 import Auth from "./auth";
+import { For } from "million/react";
 
 interface LayoutProps extends HTMLAttributes<HTMLDivElement> {
   /** ページタイトル */
@@ -67,7 +68,7 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
           </div>
           <div className="flex-1 min-w-96">
             <Link href="/" className="text-xl truncate">
-              {props.title ?? "C102委託管理"}
+              {props.title ?? "C104委託管理"}
             </Link>
           </div>
           <div className="flex-none">
@@ -76,11 +77,11 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
         </div>
         <div className={`p-4`}>
           <div className={`w-full h-full ${center ? "flex justify-center" : "block"}`}>
-          {(state === "logouted" || !loginNotNeededPaths.some(path => path.test(router.pathname)))
-            ? props.children
-            : <div>
-              Waiting for user data ...
-            </div>}
+            {(state === "logouted" || !loginNotNeededPaths.some(path => path.test(router.pathname)))
+              ? props.children
+              : <div>
+                Waiting for user data ...
+              </div>}
           </div>
         </div>
       </div>

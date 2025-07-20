@@ -1,6 +1,6 @@
-import { CircleCondition, CircleWithID } from "@/lib/types";
+import type { CircleCondition, CircleWithID } from "@/lib/types";
 import { circleWingToString, filterDeleted, isMatchCondition } from "@/lib/utils";
-import { createContext, useContext, useState, useRef, useEffect, Fragment, ReactNode, Dispatch, SetStateAction } from "react";
+import { createContext, useContext, useState, useRef, useEffect, Fragment, Dispatch, SetStateAction } from "react";
 
 interface CircleSelectorComponentProps {
   circles: CircleWithID[];
@@ -23,7 +23,7 @@ const FormDataContext = createContext({
     },
     excludeDeleted: true,
   },
-  setData: () => {}
+  setData: () => { }
 } as {
   data: CircleCondition;
   setData: Dispatch<SetStateAction<CircleCondition>>;

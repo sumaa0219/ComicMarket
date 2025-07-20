@@ -1,6 +1,6 @@
 import Layout from "@/components/layout";
 import Priority from "@/components/priority";
-import { addCircle, getAllItems, getAllUsers, getCircle, getURL, removeCircle, updateCircle, updatePriority } from "@/lib/db";
+import { getAllItems, getAllUsers, getCircle, getURL, removeCircle, updateCircle, updatePriority, uploadImage } from "@/lib/db";
 import { CircleWithID, ItemWithID, UserdataWithID, circleWithID } from "@/lib/types";
 import { circleWingToString } from "@/lib/utils";
 import { NextPageContext } from "next";
@@ -9,7 +9,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useRef, useState } from "react";
-
 
 interface ItemProps {
   circle: CircleWithID;
@@ -39,15 +38,18 @@ export default function Circle(props: ItemProps) {
   const [sending, setSending] = useState(false)
   const circleEditDialogRef = useRef<HTMLDialogElement>(null)
 
+  const [fileUploading, setFileUploading] = useState(false)
+
   return (<Layout title="サークル詳細">
     <Head>
       <title>{`${circle.name} | サークル詳細`}</title>
     </Head>
-    <div className="flex flex-row">
+    <div className="flex flex-row gap-4">
       <div className="w-1/4 flex flex-col justify-center items-center">
         <input
           type="text"
           className="input text-4xl text-center"
+          aria-label="サークル名"
           defaultValue={circle.name}
           onChange={e => {
             const { value } = e.currentTarget
@@ -87,7 +89,7 @@ export default function Circle(props: ItemProps) {
                       setCircle(newCircle)
                       updateCircle(newCircle, circle.id)
                     }}
-                    />
+                  />
                 ))
               }
             </div>
@@ -153,6 +155,37 @@ export default function Circle(props: ItemProps) {
       router.push(`/circle/list`)
     }}>サークル削除</button>
 
+    {
+      true
+        ? <form action="" className="mt-2">
+          <label htmlFor="file">{fileUploading ? "お品書きアップロード中" : "お品書き追加/更新"}</label>
+          <input
+            type="file"
+            name="circleImage"
+            accept="image/*"
+            className="file-input file-input-bordered ml-2"
+            aria-label={fileUploading ? "お品書きアップロード中" : "お品書き追加"}
+            disabled={fileUploading}
+            onChange={async e => {
+              console.log("onChange")
+              if (e.target.files && e.target.files?.length > 0) {
+                const file = e.target.files[0]
+                setFileUploading(true)
+                const fullPath = await uploadImage(file, props.circle.id)
+                const { id: _id, ...circleWithoutId } = props.circle
+                const updatedCircle = await updateCircle({
+                  ...circleWithoutId,
+                  menuImagePath: fullPath,
+                }, props.circle.id)
+                setFileUploading(false)
+                router.push(`/circle/${updatedCircle.id}`)
+              }
+            }}
+          />
+        </form>
+        : null
+    }
+
     <div className="overflow-x-auto">
       <table className="table">
         <thead>
@@ -170,36 +203,41 @@ export default function Circle(props: ItemProps) {
                 No data found
               </td>
             </tr>
-            : items.map((item, i) => item.users.map((user, j) => (
-              <tr key={`${i}-${j}`}>
-                <td>
-                  <Link href={`/user/${user.uid}`}>
-                    {props.users.find(u => u.id === user.uid)?.name}
-                  </Link>
-                </td>
-                <td>
-                  <Link href={`/item/${item.id}`}>
-                    {item.name}
-                  </Link>
-                </td>
-                <td>{user.count}</td>
-                <td>
-                  <Priority
-                    name={`item-${i}_user-${j}`}
-                    priority={user.priority}
-                    onChange={async (priority) => {
-                      setSending(true)
-                      await updatePriority(item.id, user.uid, priority)
-                      setItems(prevItems => {
-                        prevItems[i].users[j].priority = priority
-                        return prevItems
-                      })
-                      setSending(false)
-                    }}
-                  />
-                </td>
-              </tr>
-            )))}
+            : items.map(
+              (item, i) => item.users.map(
+                (user, j) => (
+                  <tr key={`${i}-${j}`}>
+                    <td>
+                      <Link href={`/user/${user.uid}`}>
+                        {props.users.find(u => u.id === user.uid)?.name}
+                      </Link>
+                    </td>
+                    <td>
+                      <Link href={`/item/${item.id}`}>
+                        {item.name}
+                      </Link>
+                    </td>
+                    <td>{user.count}</td>
+                    <td>
+                      <Priority
+                        name={`item-${i}_user-${j}`}
+                        priority={user.priority}
+                        onChange={async (priority) => {
+                          setSending(true)
+                          await updatePriority(item.id, user.uid, priority)
+                          setItems(prevItems => {
+                            prevItems[i].users[j].priority = priority
+                            return prevItems
+                          })
+                          setSending(false)
+                        }}
+                      />
+                    </td>
+                  </tr>
+                )
+              )
+            )
+          }
         </tbody>
       </table>
     </div>

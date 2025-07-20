@@ -25,7 +25,7 @@ export default function Auth() {
             </div>
           </div>
         </label>
-        <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-xl bg-base-100 rounded-box right-0">
+        <ul tabIndex={0} className="dropdown-content z-[1] w-52 menu p-2 shadow-xl bg-base-100 rounded-box right-0">
           <li>
             <Link href={`/user/${user?.uid}`}>
               マイページ

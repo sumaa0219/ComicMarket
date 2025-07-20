@@ -5,6 +5,7 @@ import { NextPageContext } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
+import { For } from "million/react";
 
 User.getInitialProps = async (ctx: NextPageContext): Promise<UserProps> => {
   return {
@@ -60,7 +61,6 @@ export default function User(props: UserProps) {
                 </tr>
               ))
           }
-
         </tbody>
       </table>
     </div>

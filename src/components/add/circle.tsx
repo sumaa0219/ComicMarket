@@ -1,11 +1,12 @@
 import { addCircle, updateCircle, uploadImage } from "@/lib/db";
 import { Circle, CircleWithID } from "@/lib/types";
 import { circleWingToString, filterDeleted } from "@/lib/utils";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useContext, useRef, useState } from "react";
 import CircleSelector from "../circleSelector";
+import { CircleItemContext } from "./contexts";
 
 interface AddCircleProps {
-  circles: CircleWithID[];
+  // circles: CircleWithID[];
   onSelect?: (circle: CircleWithID) => void;
 }
 
@@ -13,6 +14,7 @@ export default function AddCircle(props: AddCircleProps) {
   const [circle, setCircle] = useState<CircleWithID | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const [warn, setWarn] = useState<string>("")
+  const { circles, addNewCircle } = useContext(CircleItemContext)
 
   const [sending, setSending] = useState(false)
 
@@ -37,7 +39,7 @@ export default function AddCircle(props: AddCircleProps) {
           </div>
         </div>
       }
-      <CircleSelector circles={props.circles} onChange={setCircle} className="mt-4" />
+      <CircleSelector circles={circles} onChange={setCircle} className="mt-4" />
     </form>
     {
       !circle && (
@@ -103,15 +105,18 @@ export default function AddCircle(props: AddCircleProps) {
 
             // 重複するサークルがないか確認
             const duplicateCheck = {
-              name: props.circles.filter(filterDeleted).find(c => c.name === formData.name),
-              place: props.circles.filter(filterDeleted).find(c => c.place === formData.place && c.day === formData.day && c.wing === formData.wing),
+              name: circles.filter(filterDeleted).find(c => c.name === formData.name),
+              place: circles.filter(filterDeleted).find(c => c.place === formData.place && c.day === formData.day && c.wing === formData.wing),
             }
             if (duplicateCheck.name) {
               showWarn("同名のサークルが存在")
             } else if (duplicateCheck.place) {
               showWarn("同じ場所にサークルが存在")
             } else {
-              const data = await addCircle(formData)
+              const data = await addCircle(formData) as CircleWithID
+
+              // add circle to context
+              addNewCircle(data)
 
               if (file) {
                 const fullPath = await uploadImage(file, data.id)

@@ -1,6 +1,6 @@
 import { User } from "firebase/auth";
 import {
-  Firestore,
+  type Firestore,
   collection as _collection,
   doc as _doc,
   getDoc,
@@ -9,7 +9,7 @@ import {
   setDoc,
   where
 } from "firebase/firestore";
-import { getDownloadURL, ref as _ref, uploadBytes, FirebaseStorage } from "firebase/storage";
+import { getDownloadURL, ref as _ref, uploadBytes, type FirebaseStorage } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { firestore, storage } from "./firebase";
 import { Circle, CircleWithID, Item, ItemWithID, Userdata, UserdataWithID, circle, circleWithID, item, itemWithID } from "./types";
@@ -24,19 +24,28 @@ function isDev() {
   return condition
 }
 
+async function measure<R>(func: () => Promise<R>, name: string): Promise<R> {
+  const start = Date.now()
+  const result = await func()
+  console.log(`[db] [${name}] took ${Date.now() - start}ms`)
+  return result
+}
+
 function doc(firestore: Firestore, path: string, ...pathSegments: string[]): ReturnType<typeof _doc> {
-  return isDev() ? _doc(firestore, "dev_"+path, ...pathSegments) : _doc(firestore, path, ...pathSegments)
+  return _doc(firestore, (isDev() ? "dev_" : "") + path, ...pathSegments)
 }
 function collection(firestore: Firestore, path: string, ...pathSegments: string[]): ReturnType<typeof _collection> {
   try {
-    return isDev() ? _collection(firestore, "dev_"+path, ...pathSegments) : _collection(firestore, path, ...pathSegments)
+    return _collection(firestore, (isDev() ? "dev_" : "") + path, ...pathSegments)
   } catch (e) {
     console.error("collection", path, pathSegments, e)
     throw e
   }
 }
 function ref(storage: FirebaseStorage, url?: string | undefined): ReturnType<typeof _ref> {
-  return isDev() ? _ref(storage, "dev_"+url) : _ref(storage, url)
+  // \/?(dev_)?[URL] -> [URL]
+  const pureURL = url?.match(/\/?(dev_)?(.*)/)?.[2]
+  return _ref(storage, "/" + (isDev() ? "dev_" : "") + pureURL)
 }
 
 /**
@@ -52,7 +61,7 @@ export async function addCircle(circleArg: Circle, id: string = uuidv4()) {
     ...pCircle,
   }
   await setDoc(doc(firestore, "circles", id), data)
-  return {...data, id}
+  return { ...data, id }
 }
 
 /** サークル情報を更新 */
@@ -62,25 +71,31 @@ export const updateCircle = addCircle
  * IDからサークル情報を取得
  * @param id サークルID
  */
-export async function getCircle(id: string) {
+export async function _getCircle(id: string) {
   const docRef = await getDoc(doc(firestore, "circles", id))
-  
-  return circleWithID.parse({
+
+  const data = circleWithID.parse({
     ...docRef.data(),
     id: docRef.id,
   })
+  console.log("getCircle", data)
+  return data
 }
+
+export const getCircle = (id: string) => measure(() => _getCircle(id), `getCircle:${id}`)
 
 /**
  * 全てのサークル情報を取得
  */
-export async function getAllCircles(): Promise<CircleWithID[]> {
+export async function _getAllCircles(): Promise<CircleWithID[]> {
   const data = (await getDocs(collection(firestore, "circles"))).docs.map(doc => ({
     ...(doc.data() as Circle),
     id: doc.id,
   }))
   return data
 }
+
+export const getAllCircles = () => measure(_getAllCircles, "getAllCircles")
 
 export async function removeCircle(id: string) {
   const circle = await getCircle(id)
@@ -102,8 +117,10 @@ export async function addItem(itemArg: Item, idArg?: string): Promise<ItemWithID
     ...pItem,
   }
   await setDoc(doc(firestore, "items", id), data)
-  return {...data, id}
+  return { ...data, id }
 }
+
+export const updateItem = addItem
 
 /**
  * 購入物に購入者を追加
@@ -155,7 +172,7 @@ export async function updatePriority(itemId: ItemWithID["id"], userId: string, p
 /**
  * 全ての購入物情報を取得
  */
-export async function getAllItems(circleId?: Item["circleId"]): Promise<ItemWithID[]> {
+export async function _getAllItems(circleId?: Item["circleId"]): Promise<ItemWithID[]> {
   if (circleId) {
     const data: ItemWithID[] = (await getDocs(query(collection(firestore, "items"), where("circleId", "==", circleId)))).docs.map(doc => ({
       ...(doc.data() as Item),
@@ -170,6 +187,8 @@ export async function getAllItems(circleId?: Item["circleId"]): Promise<ItemWith
     return data
   }
 }
+
+export const getAllItems = (circleId?: Item["circleId"]) => measure(() => _getAllItems(circleId), "getAllItems")
 
 /**
  * IDから購入物情報を取得
@@ -214,13 +233,15 @@ export async function updateUserName(id: string, name: string) {
  * IDから購入物情報を取得
  * @param id 購入物ID
  */
-export async function getUser(id: string): Promise<UserdataWithID> {
+export async function _getUser(id: string): Promise<UserdataWithID> {
   const docRef = await getDoc(doc(firestore, "users", id))
   return {
     ...docRef.data() as Userdata,
     id,
   }
 }
+
+export const getUser = (id: string) => measure(() => _getUser(id), "getUser")
 
 /**
  * 全ての購入物情報を取得

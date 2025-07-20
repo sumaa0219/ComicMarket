@@ -3,6 +3,7 @@ import Layout from "@/components/layout"
 import { getAllCircles, getAllItems } from "@/lib/db"
 import { CircleWithID, CircleCondition, circleCondition, ItemWithID } from "@/lib/types"
 import { circleWingToString, filterDeleted, isMatchCondition, sortCircleByDP } from "@/lib/utils"
+import { For } from "million/react"
 import { Metadata, NextPageContext } from "next"
 import Head from "next/head"
 import Link from "next/link"
@@ -53,7 +54,7 @@ export default function ListCircle(props: ListCircleProps) {
           </thead>
           <tbody>
             {
-              circles.map((c, i) => (
+              circles.map(((c, i) => (
                 <tr className="" key={i}>
                   <td className="">
                     <Link href={`/circle/${c.id}`} className={`w-full ${c.deleted && "text-neutral-500"}`}>
@@ -77,7 +78,7 @@ export default function ListCircle(props: ListCircleProps) {
                     }
                   </td>
                 </tr>
-              ))}
+              )))}
           </tbody>
         </table>
       </div>

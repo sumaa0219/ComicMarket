@@ -7,9 +7,16 @@ import { CircleCondition, CircleWithID, ItemWithID, circleCondition, circleWithI
  * @param circleArg サークル情報
  */
 export function isMatchCondition(conditionArg: CircleCondition, circleArg: CircleWithID): boolean {
-  const condition = circleCondition.parse(conditionArg)
+  const conditionParse = circleCondition.safeParse(conditionArg)
+  if (!conditionParse.success) {
+    console.warn("condition parse error")
+    console.error(conditionParse.error, conditionArg)
+    return false
+  }
+  const { data: condition } = conditionParse
   const circleParse = circleWithID.safeParse(circleArg)
   if (!circleParse.success) {
+    console.log("circle parse error")
     console.error(circleParse.error, circleArg)
     return false
   }
@@ -105,6 +112,8 @@ export function sortCircleByDP(circles: CircleWithID[]): CircleWithID[] {
 
 /**
  * 購入物をサークルの日付と場所でソート
+ * @param items 購入物
+ * @param circles サークル
  */
 export function sortItemByDP(items: ItemWithID[], circles: CircleWithID[]): ItemWithID[] {
   return items.sort((a, b) => {

@@ -1,4 +1,5 @@
 import { ItemWithID } from "@/lib/types";
+import { For } from "million/react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 interface ItemSelectorComponentProps {
@@ -42,7 +43,7 @@ function ItemSelectorComponent(props: ItemSelectorComponentProps) {
 
 interface ItemSelectorProps extends ItemSelectorComponentProps {
 }
-export default function ItemSelector({items, onChange, ...props}: ItemSelectorProps) {
+export default function ItemSelector({ items, onChange, ...props }: ItemSelectorProps) {
   const modalRef = useRef<HTMLDialogElement>(null)
   return (
     <Fragment>
