@@ -4,14 +4,14 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage, ref } from "firebase/storage";
 import { getPerformance } from "firebase/performance";
 
-export const firebaseConfig: FirebaseOptions = {
-    apiKey: "AIzaSyDQJFlRmGUyykofbHt-6EalwIcU6zFEP1Y",
-    authDomain: "comicmarket-fork-2.firebaseapp.com",
-    projectId: "comicmarket-fork-2",
-    storageBucket: "comicmarket-fork-2.appspot.com",
-    messagingSenderId: "1034233345680",
-    appId: "1:1034233345680:web:e1451144aaa03640bbca15",
-    measurementId: "G-WDH291H66W"
+export const firebaseConfig = {
+  apiKey: "AIzaSyAnbSmGHcxySKrU4cmXWP0XdrznmVvgXQQ",
+  authDomain: "c106database.firebaseapp.com",
+  projectId: "c106database",
+  storageBucket: "c106database.firebasestorage.app",
+  messagingSenderId: "14463714830",
+  appId: "1:14463714830:web:6856e5db415a5a0cb15e5f",
+  measurementId: "G-JS12EYLG2Z"
 };
 
 export const firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]

@@ -1,4 +1,6 @@
 import admin, { type ServiceAccount } from "firebase-admin";
+import { firebaseConfig } from "./firebase";
+
 import { z } from "zod";
 
 function env(name: string): string {
@@ -8,10 +10,10 @@ function env(name: string): string {
 }
 
 const serviceAccount = z.object({
-  projectId: z.string(),
-  privateKey: z.string(),
-  clientEmail: z.string(),
-}).transform((data: any) => data as ServiceAccount)
+  projectId: z.string().optional(),
+  privateKey: z.string().optional(),
+  clientEmail: z.string().optional(),
+}).transform(data => data as ServiceAccount)
 
 const credential = serviceAccount.parse(
   JSON.parse(
@@ -26,8 +28,8 @@ const credential = serviceAccount.parse(
 
 export const adminApp = admin.apps.length === 0
   ? admin.initializeApp({
-    credential: admin.credential.cert(credential),
-    projectId: credential.projectId
+        ...firebaseConfig,
+    credential: admin.credential.cert(credential)
   })
   : admin.app();
 export const firestore = admin.firestore(adminApp)
