@@ -23,38 +23,39 @@ interface MenuItem {
   href: string;
 }
 
-const loginNotNeededPaths: RegExp[] = [
-  /^\/login\/?.*$/,
-]
+const loginNotNeededPaths: RegExp[] = [/^\/login\/?.*$/];
 
 export default function Layout({ center = false, ...props }: LayoutProps) {
   const menuItems: MenuItem[] = [
     {
       title: "サークル一覧",
-      href: "/circle/list"
+      href: "/circle/list",
     },
     {
       title: "購入物一覧",
-      href: "/item/list"
+      href: "/item/list",
     },
     {
       title: "購入物・サークル追加",
-      href: "/add"
+      href: "/add",
     },
     {
       title: "ユーザー一覧",
-      href: "/user"
+      href: "/user",
     },
-  ]
+  ];
 
-  const router = useRouter()
+  const router = useRouter();
   const { state, login } = useAuth(auth);
 
   useEffect(() => {
-    if (state === "logouted" && !loginNotNeededPaths.some(path => path.test(router.pathname))) {
-      router.push(`/login?return=${encodeURIComponent(router.asPath)}`)
+    if (
+      state === "logouted" &&
+      !loginNotNeededPaths.some((path) => path.test(router.pathname))
+    ) {
+      router.push(`/login?return=${encodeURIComponent(router.asPath)}`);
     }
-  }, [login, router, state])
+  }, [login, router, state]);
 
   return (
     <div className="drawer">
@@ -62,13 +63,17 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
       <div className="drawer-content">
         <div className="navbar bg-base-100 px-4 shadow-lg sticky top-0 z-50">
           <div className="flex-none mr-4">
-            <label htmlFor="page-drawer" className="btn btn-square btn-ghost drawer-button" title="メニューを開く">
+            <label
+              htmlFor="page-drawer"
+              className="btn btn-square btn-ghost drawer-button"
+              title="メニューを開く"
+            >
               <HumbergerIcon />
             </label>
           </div>
           <div className="flex-1 min-w-96">
             <Link href="/" className="text-xl truncate">
-              {props.title ?? "C104委託管理"}
+              {props.title ?? "C106委託管理"}
             </Link>
           </div>
           <div className="flex-none">
@@ -76,29 +81,32 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
           </div>
         </div>
         <div className={`p-4`}>
-          <div className={`w-full h-full ${center ? "flex justify-center" : "block"}`}>
-            {(state === "logouted" || !loginNotNeededPaths.some(path => path.test(router.pathname)))
-              ? props.children
-              : <div>
-                Waiting for user data ...
-              </div>}
+          <div
+            className={`w-full h-full ${
+              center ? "flex justify-center" : "block"
+            }`}
+          >
+            {state === "logouted" ||
+            !loginNotNeededPaths.some((path) => path.test(router.pathname)) ? (
+              props.children
+            ) : (
+              <div>Waiting for user data ...</div>
+            )}
           </div>
         </div>
       </div>
       <div className="drawer-side mt-16">
         <label htmlFor="page-drawer" className="drawer-overlay"></label>
         <ul className="menu p-4 w-80 h-full bg-base-200 text-base-content">
-          {
-            menuItems.map((item, index) => (
-              <li key={`${index}-${item.title}`}>
-                <Link href={item.href} className="link">
-                  {item.title}
-                </Link>
-              </li>
-            ))
-          }
+          {menuItems.map((item, index) => (
+            <li key={`${index}-${item.title}`}>
+              <Link href={item.href} className="link">
+                {item.title}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
-  )
+  );
 }
