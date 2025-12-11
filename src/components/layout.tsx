@@ -73,7 +73,7 @@ export default function Layout({ center = false, ...props }: LayoutProps) {
           </div>
           <div className="flex-1 min-w-96">
             <Link href="/" className="text-xl truncate">
-              {props.title ?? "C106委託管理"}
+              {props.title ?? "C017委託管理"}
             </Link>
           </div>
           <div className="flex-none">
