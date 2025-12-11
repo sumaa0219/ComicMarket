@@ -18,7 +18,7 @@ const getFirebaseConfig = (): FirebaseOptions => {
       const config = JSON.parse(decodedConfig) as FirebaseOptions;
       return config;
     } catch (error) {
-      console.error('Failed to decode NEXT_PUBLIC_FIREBASE_CONFIG:', error);
+      console.error('Failed to decode NEXT_PUBLIC_FIREBASE_CONFIG_BASE64:', error);
       // Fall through to individual environment variables
     }
   }
